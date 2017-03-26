@@ -1,11 +1,10 @@
 <project>
     <shortName>Mudlet</shortName>
     <fullName>Mudlet</fullName>
-    <version>3.0.0-kappa</version>
+    <version>3.0.0</version>
     <licenseFile>COPYING</licenseFile>
     <leftImage>mudlet_installer_left_side.png</leftImage>
     <logoImage>mudlet.png</logoImage>
-    <splashImage>mudlet_splash.png</splashImage>
     <wmImage>mudlet_main_48px.png</wmImage>
     <componentList>
         <component>

@@ -3,11 +3,11 @@
 # abort script if any command fails
 set -e
 
-START_DIRECTORY=`pwd`
+START_DIRECTORY=$(pwd)
 
 # setup linuxdeployqt binary if not found
 if [[ ! -e linuxdeployqt.AppImage ]]; then
-  if [ `getconf LONG_BIT` = "64" ]
+  if [ "$(getconf LONG_BIT)" = "64" ]
   then
       # download prepackaged linuxdeployqt. Doesn't seem to have a "latest" url yet
       echo "linuxdeployqt not found - downloading one."
@@ -22,10 +22,10 @@ if [[ ! -e linuxdeployqt.AppImage ]]; then
     cd patchelf
     bash ./bootstrap.sh
     ./configure
-    make -j `nproc`
+    make -j "$(nproc)"
     sudo make install
 
-    cd ${START_DIRECTORY}
+    cd "${START_DIRECTORY}"
     sudo wget -c "https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-i686.AppImage" -O /usr/local/bin/appimagetool
     sudo chmod a+x /usr/local/bin/appimagetool
 
@@ -34,7 +34,7 @@ if [[ ! -e linuxdeployqt.AppImage ]]; then
     # build currently broken, use latest that works
     git checkout c21b17174de603e6be14ef719c20101d1ccfb87e
     qmake linuxdeployqt.pro
-    make -j `nproc`
+    make -j "$(nproc)"
 
     mkdir -p linuxdeployqt.AppDir/usr/bin/
     cp /usr/local/bin/patchelf linuxdeployqt.AppDir/usr/bin/
@@ -43,7 +43,7 @@ if [[ ! -e linuxdeployqt.AppImage ]]; then
     export VERSION=continuous
     cp ./linuxdeployqt/linuxdeployqt linuxdeployqt.AppDir/usr/bin/
     ./linuxdeployqt/linuxdeployqt linuxdeployqt.AppDir/linuxdeployqt.desktop -appimage
-    cp linuxdeployqt-continuous-Intel_80386.AppImage ${START_DIRECTORY}/linuxdeployqt.AppImage
+    cp linuxdeployqt-continuous-Intel_80386.AppImage "${START_DIRECTORY}/linuxdeployqt.AppImage"
   fi
 fi
 
@@ -53,7 +53,7 @@ if [ ! -d "source" ]; then
 fi
 
 # In case Mudlet source already exists, update it
-cd ${START_DIRECTORY}
+cd "${START_DIRECTORY}"
 cd source/
 git pull
 
@@ -65,7 +65,7 @@ cd src/
 
 # Compile using all available cores
 qmake
-make -j `nproc`
+make -j "$(nproc)"
 
 # go up to the root folder and clean up the build/ folder
 cd ../../
@@ -88,7 +88,7 @@ echo "Generating AppImage for the first time"
 
 # now copy Lua modules we need in
 # this should be improved not to be hardcoded
-if [ `getconf LONG_BIT` = "64" ]
+if [ "$(getconf LONG_BIT)" = "64" ]
     then
     cp /usr/lib/x86_64-linux-gnu/lua/5.1/lfs.so      ./build/lib
     cp /usr/lib/x86_64-linux-gnu/lua/5.1/rex_pcre.so ./build/lib

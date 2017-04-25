@@ -39,7 +39,8 @@ cd src/
 # find out if we do a dev or a release build
 dev=$(perl -lne 'print $1 if /^BUILD = (.*)$/' < src.pro)
 if [ ! -z "${dev}" ]; then
-  perl -pi -e "s/BUILD = -dev.*$/BUILD = -dev-$commit/" src.pro
+  BUILD="-dev-$commit"
+  export BUILD
 fi
 version=$(perl -lne 'print $1 if /^VERSION = (.+)/' < src.pro)
 cd ..
@@ -55,7 +56,7 @@ make -j "$(sysctl -n hw.ncpu)"
 
 # determine target app name
 if [ ! -z "${dev}" ]; then
-  app="Mudlet-${version}-dev-${commit}.app"
+  app="Mudlet-${version}${BUILD}.app"
   # Rename app according to version
   mv Mudlet.app "${app}"
 else

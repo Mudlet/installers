@@ -39,8 +39,8 @@ cd src/
 # find out if we do a dev or a release build
 dev=$(perl -lne 'print $1 if /^BUILD = (.*)$/' < src.pro)
 if [ ! -z "${dev}" ]; then
-  BUILD="-dev-$commit"
-  export BUILD
+  MUDLET_VERSION_BUILD="-dev-$commit"
+  export MUDLET_VERSION_BUILD
 fi
 version=$(perl -lne 'print $1 if /^VERSION = (.+)/' < src.pro)
 cd ..

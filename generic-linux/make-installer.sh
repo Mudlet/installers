@@ -95,8 +95,9 @@ if [ "$(getconf LONG_BIT)" = "64" ]
     mkdir                                                                  ./build/lib/luasql
     cp /usr/lib/x86_64-linux-gnu/lua/5.1/luasql/sqlite3.so                 ./build/lib/luasql
     cp /usr/lib/x86_64-linux-gnu/lua/5.1/zip.so                            ./build/lib
-    # patch zip.so so it loads libzzip
-    patchelf --set-rpath "$ORIGIN" ./build/lib/zip.so
+    # patch zip.so so it loads libzzip, disable shellcheck as we really don't want expansion
+    # shellcheck disable=SC2016
+    patchelf --set-rpath '$ORIGIN' ./build/lib/zip.so
     cp /usr/lib/x86_64-linux-gnu/libzzip-0.so.13                           ./build/lib
     # mp3 support for sounds 
     # cp /usr/lib/x86_64-linux-gnu/gstreamer-0.10/libgstflump3dec.so         ./build/lib
@@ -146,8 +147,9 @@ else
   mkdir                                                                ./build/lib/luasql
   cp /usr/lib/i386-linux-gnu/lua/5.1/luasql/sqlite3.so                 ./build/lib/luasql
   cp /usr/lib/i386-linux-gnu/lua/5.1/zip.so                            ./build/lib
-  # patch zip.so so it loads libzzip
-  patchelf --set-rpath "$ORIGIN" ./build/lib/zip.so
+  # patch zip.so so it loads libzzip, disable shellcheck as we really don't want expansion
+  # shellcheck disable=SC2016
+  patchelf --set-rpath '$ORIGIN' ./build/lib/zip.so
   cp /usr/lib/i386-linux-gnu/libzzip-0.so.13                           ./build/lib
   # mp3 support for sounds 
   # cp /usr/lib/i386-linux-gnu/gstreamer-0.10/libgstflump3dec.so         ./build/lib

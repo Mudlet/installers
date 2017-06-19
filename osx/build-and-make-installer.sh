@@ -17,7 +17,7 @@ if [ ! -d "source" ]; then
     exit 2
   fi
 
-  git clone https://github.com/Mudlet/Mudlet.git source
+  git clone --recursive https://github.com/Mudlet/Mudlet.git source
 
   # Switch to $commitish
   (cd source && git checkout "${commitish}")

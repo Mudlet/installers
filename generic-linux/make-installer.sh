@@ -54,13 +54,19 @@ perl -pi -e "s/1.0/${version}/g" build/mudlet.desktop
 mkdir -p build/lib/luasql
 for lib in lfs rex_pcre luasql/sqlite3 zip lua-utf8
 do
+  found=0
   for path in $(lua -e "print(package.cpath)" | tr ";" "\n")
   do
     changed_path=${path/\?/${lib}};
     if [ -e "${changed_path}" ]; then
       cp -rL "${changed_path}" build/lib/${lib}.so
+      found=1
     fi
   done
+  if [ "${found}" -ne "1" ]; then
+    echo "Missing dependency ${lib}, aborting."
+    exit 1
+  fi
 done
 
 # copy in files ignored (?) by linuxdeployqt

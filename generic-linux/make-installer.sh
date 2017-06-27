@@ -73,8 +73,15 @@ done
 cp "$(ldd build/lib/rex_pcre.so | cut -d ' ' -f 3 | grep 'libpcre')" build/lib
 cp "$(ldd build/lib/zip.so | cut -d ' ' -f 3 | grep 'libz.so')" build/lib
 
+# extract linuxdeployqt since some environments (like travis) don't allow FUSE
+./linuxdeployqt.AppImage --appimage-extract
+
 echo "Generating AppImage"
-./linuxdeployqt.AppImage ./build/mudlet -appimage -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so -executable=build/lib/luasql/sqlite3.so
+./squashfs-root/AppRun ./build/mudlet -appimage -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so -executable=build/lib/luasql/sqlite3.so
+
+# clean up extracted appimage
+rm -rf squashfs-root/
+
 
 if [ -z "${release}" ]; then
   output_name="Mudlet-${version}"

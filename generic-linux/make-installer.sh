@@ -71,7 +71,7 @@ done
 
 # copy in files ignored (?) by linuxdeployqt
 cp "$(ldd build/lib/rex_pcre.so | cut -d ' ' -f 3 | grep 'libpcre')" build/lib
-cp "$(ldd build/lib/zip.so | cut -d ' ' -f 3 | grep 'libz')" build/lib
+cp "$(ldd build/lib/zip.so | cut -d ' ' -f 3 | grep 'libz.so')" build/lib
 
 echo "Generating AppImage"
 ./linuxdeployqt.AppImage ./build/mudlet -appimage -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so -executable=build/lib/luasql/sqlite3.so

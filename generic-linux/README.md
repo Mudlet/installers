@@ -1,10 +1,10 @@
-The OS X installer generation
+The Linux installer generation
 =============================
 
 The directory
 -------------
 
-This directory contains all files needed to create the generic linux APpImage. It is home to two helper scripts `build-and-make-installer.sh`, which runs the full build and generation process, as well as `make-installer.sh`, which is the isolated generation process.
+This directory contains all files needed to create the generic linux AppImage. It is home to two helper scripts `build-and-make-installer.sh`, which runs the full build and generation process, as well as `make-installer.sh`, which is the isolated generation process.
 
 Prerequisites
 -------------

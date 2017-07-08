@@ -1,7 +1,7 @@
 <project>
     <shortName>Mudlet</shortName>
     <fullName>Mudlet</fullName>
-    <version>3.2.0</version>
+    <version>3.3.1</version>
     <licenseFile>COPYING</licenseFile>
     <leftImage>mudlet_installer_left_side.png</leftImage>
     <logoImage>mudlet.png</logoImage>
@@ -264,32 +264,8 @@
                         <distributionDirectory>
                             <origin>../mudlet-lua</origin>
                         </distributionDirectory>
-                        <distributionDirectory>
-                            <origin>windows-binaries-32bit/audio</origin>
-                        </distributionDirectory>
-                        <distributionDirectory>
-                            <origin>windows-binaries-32bit/imageformats</origin>
-                        </distributionDirectory>
-                        <distributionDirectory>
-                            <origin>windows-binaries-32bit/mediaservice</origin>
-                        </distributionDirectory>
-                        <distributionDirectory>
-                            <origin>windows-binaries-32bit/platforms</origin>
-                        </distributionDirectory>
-                        <distributionDirectory>
-                            <origin>windows-binaries-32bit/luasql</origin>
-                        </distributionDirectory>
                         <distributionFile>
                             <origin>windows-binaries-32bit/en_US.dic</origin>
-                        </distributionFile>
-                        <distributionFile>
-                            <origin>windows-binaries-32bit/icudt54.dll</origin>
-                        </distributionFile>
-                        <distributionFile>
-                            <origin>windows-binaries-32bit/icuin54.dll</origin>
-                        </distributionFile>
-                        <distributionFile>
-                            <origin>windows-binaries-32bit/icuuc54.dll</origin>
                         </distributionFile>
                         <distributionFile>
                             <origin>windows-binaries-32bit/lfs.dll</origin>
@@ -328,6 +304,9 @@
                             <origin>windows-binaries-32bit/libzip-2.dll</origin>
                         </distributionFile>
                         <distributionFile>
+                            <origin>windows-binaries-32bit/lua-utf8.dll</origin>
+                        </distributionFile>
+                        <distributionFile>
                             <origin>windows-binaries-32bit/lua51.dll</origin>
                         </distributionFile>
                         <distributionFile>
@@ -349,9 +328,6 @@
                             <origin>windows-binaries-32bit/Qt5OpenGL.dll</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>windows-binaries-32bit/Qt5Svg.dll</origin>
-                        </distributionFile>
-                        <distributionFile>
                             <origin>windows-binaries-32bit/Qt5Widgets.dll</origin>
                         </distributionFile>
                         <distributionFile>
@@ -366,6 +342,21 @@
                         <distributionFile>
                             <origin>windows-binaries-32bit/zlib1.dll</origin>
                         </distributionFile>
+                        <distributionDirectory>
+                            <origin>windows-binaries-32bit/imageformats</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>windows-binaries-32bit/audio</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>windows-binaries-32bit/luasql</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>windows-binaries-32bit/mediaservice</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>windows-binaries-32bit/platforms</origin>
+                        </distributionDirectory>
                     </distributionFileList>
                 </folder>
                 <folder>

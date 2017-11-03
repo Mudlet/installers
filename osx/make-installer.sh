@@ -86,6 +86,13 @@ fi
 /usr/libexec/PlistBuddy -c "Add SUAllowsAutomaticUpdates bool true" "${app}/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Add SUAutomaticallyUpdate bool true" "${app}/Contents/Info.plist" || true
 
+# Sign everything now that we're done modifying contents of the .app file
+# Keychain is already setup in travis.osx.after_success.sh for us
+if [ ! -z "$CERT_PW" ]; then
+  codesign --deep -s "$IDENTITY" "${app}/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/"
+  codesign --deep -s "$IDENTITY" "${app}"
+fi
+
 # Generate final .dmg
 cd ../..
 rm -f ~/Desktop/Mudlet*.dmg

@@ -5,7 +5,7 @@
     <version>0.0.0</version>
     <authors>Mudlet Makers</authors>
     <owners>Mudlet Makers</owners>
-    <licenseUrl>https://github.com/Mudlet/Mudlet/blob/development/COPYING</licenseUrl>
+    <licenseUrl>https://raw.githubusercontent.com/Mudlet/Mudlet/development/COPYING</licenseUrl>
     <projectUrl>https://www.mudlet.org/</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/Mudlet/Mudlet/development/src/icons/mudlet_main_512x512_6XS_icon.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

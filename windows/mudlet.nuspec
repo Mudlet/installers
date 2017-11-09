@@ -1,6 +1,7 @@
 <package>
   <metadata>
     <id>Mudlet</id>
+    <title>Mudlet</title>
     <version>0.0.0</version>
     <authors>Mudlet Makers</authors>
     <owners>Mudlet Makers</owners>

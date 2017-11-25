@@ -47,8 +47,6 @@ cp -rf source/src/mudlet-lua build/
 # and the .desktop file so linuxdeployqt can pilfer it for info
 cp source/mudlet{.desktop,.png,.svg} build/
 
-perl -pi -e "s/1.0/${version}/g" build/mudlet.desktop
-
 # now copy Lua modules we need in
 # this should be improved not to be hardcoded
 mkdir -p build/lib/luasql

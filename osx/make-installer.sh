@@ -91,7 +91,7 @@ fi
 echo "identity there? $(security find-identity | grep -q "$IDENTITY")"
 security find-identity
 echo "IDENTITY: $IDENTITY"
-if [ -z "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
+if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
   echo "identity found, will sign with it"
   codesign --deep -s "$IDENTITY" "${app}/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/"
   codesign --deep -s "$IDENTITY" "${app}"

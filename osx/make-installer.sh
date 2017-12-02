@@ -88,14 +88,9 @@ fi
 
 # Sign everything now that we're done modifying contents of the .app file
 # Keychain is already setup in travis.osx.after_success.sh for us
-echo "identity there? $(security find-identity | grep -q "$IDENTITY")"
-security find-identity
-echo "IDENTITY: $IDENTITY"
 if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
-  echo "identity found, will sign with it"
   codesign --deep -s "$IDENTITY" "${app}/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/"
   codesign --deep -s "$IDENTITY" "${app}"
-  echo "singing commands executed"
 fi
 
 # Generate final .dmg

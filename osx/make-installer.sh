@@ -67,7 +67,6 @@ cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
 cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
 cp -r "../3rdparty/lua_code_formatter" "${app}/Contents/MacOS"
 mv "${app}/Contents/MacOS/lua_code_formatter" "${app}/Contents/MacOS/lcf"
-find "${app}/Contents/MacOS"
 
 # Edit some nice plist entries, don't fail if entries already exist
 /usr/libexec/PlistBuddy -c "Add CFBundleName string Mudlet" "${app}/Contents/Info.plist" || true

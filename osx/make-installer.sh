@@ -65,6 +65,7 @@ cp "${HOME}/.luarocks/lib/lua/5.1/rex_pcre.so" "${app}/Contents/MacOS"
 python macdeployqtfix.py "${app}/Contents/MacOS/rex_pcre.so" "/usr/local/opt/qt/bin"
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
 cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
+# code formatter's require() expects the folder to be called 'lfc', yet the repository is 'lua_code_formatter' - so rename it
 cp -r "../3rdparty/lua_code_formatter/*" "${app}/Contents/MacOS/lfc"
 
 # Edit some nice plist entries, don't fail if entries already exist

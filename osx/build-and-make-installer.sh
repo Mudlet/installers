@@ -17,7 +17,7 @@ if [ ! -d "source" ]; then
     exit 2
   fi
 
-  git clone --recursive https://github.com/Mudlet/Mudlet.git source
+  git clone https://github.com/Mudlet/Mudlet.git source
 
   # Switch to $commitish
   (cd source && git checkout "${commitish}")
@@ -36,13 +36,19 @@ PATH=/usr/local/opt/qt/bin:$PATH
 
 # Add commit information to version and extract version info itself
 cd src/
+# Find out what the correct project file is. We switched names at some point.
+if [ -f "src.pro" ]; then
+  PROJECT_FILE="src.pro"
+else
+  PROJECT_FILE="mudlet.pro"
+fi
 # find out if we do a dev or a release build
-dev=$(perl -lne 'print $1 if /^BUILD = (.*)$/' < src.pro)
+dev=$(perl -lne 'print $1 if /^BUILD = (.*)$/' < "${PROJECT_FILE}")
 if [ ! -z "${dev}" ]; then
   MUDLET_VERSION_BUILD="-dev-$commit"
   export MUDLET_VERSION_BUILD
 fi
-version=$(perl -lne 'print $1 if /^VERSION = (.+)/' < src.pro)
+version=$(perl -lne 'print $1 if /^VERSION = (.+)/' < "${PROJECT_FILE}")
 cd ..
 
 mkdir -p build
@@ -51,7 +57,7 @@ cd build/
 rm -rf Mudlet*.app/
 
 # Compile using all available cores
-qmake ../src/src.pro
+qmake "../src/${PROJECT_FILE}"
 make -j "$(sysctl -n hw.ncpu)"
 
 # determine target app name

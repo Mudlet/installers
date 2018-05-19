@@ -65,7 +65,16 @@ cp "${HOME}/.luarocks/lib/lua/5.1/rex_pcre.so" "${app}/Contents/MacOS"
 python macdeployqtfix.py "${app}/Contents/MacOS/rex_pcre.so" "/usr/local/opt/qt/bin"
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
 cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
-cp -r "../3rdparty/lcf" "${app}/Contents/MacOS"
+if [ -d "../3rdparty/lua_code_formatter" ]; then
+  # we renamed lcf at some point
+  LCF_NAME="lua_code_formatter"
+else
+  LCF_NAME="lcf"
+fi
+cp -r "../3rdparty/${LCF_NAME}" "${app}/Contents/MacOS"
+if [ "${LCF_NAME}" != "lcf" ]; then
+  mv "${app}/Contents/MacOS/${LCF_NAME}" "${app}/Contents/MacOS/lcf"
+fi
 
 # Edit some nice plist entries, don't fail if entries already exist
 /usr/libexec/PlistBuddy -c "Add CFBundleName string Mudlet" "${app}/Contents/Info.plist" || true

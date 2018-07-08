@@ -73,7 +73,7 @@ done
 ./linuxdeployqt.AppImage --appimage-extract
 
 echo "Generating AppImage"
-./squashfs-root/AppRun ./build/mudlet -appimage -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so -executable=build/lib/luasql/sqlite3.so
+./squashfs-root/AppRun ./build/mudlet -appimage -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so -executable=build/lib/luasql/sqlite3.so -extra-plugins=texttospeech/libqttexttospeech_flite.so
 
 # clean up extracted appimage
 rm -rf squashfs-root/

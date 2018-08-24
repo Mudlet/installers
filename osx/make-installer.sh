@@ -35,13 +35,15 @@ fi
 
 # install installer dependencies
 brew update
-BREWS="sqlite3 lua@5.1 node wget"
+BREWS="sqlite3 lua@5.1 node wget luarocks"
 for i in $BREWS; do
   brew outdated | grep -q "$i" && brew upgrade "$i"
 done
 for i in $BREWS; do
   brew list | grep -q "$i" || brew install "$i"
 done
+# create an alias to avoid the need to list the lua dir all the time
+alias luarocks-5.1="luarocks --lua-dir='$(brew --prefix lua@5.1)'"
 if [ ! -f "macdeployqtfix.py" ]; then
   wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
 fi

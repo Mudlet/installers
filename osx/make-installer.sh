@@ -2,6 +2,7 @@
 
 # abort script if any command fails
 set -e
+shopt -s expand_aliases
 
 # extract program name for message
 pgm=$(basename "$0")

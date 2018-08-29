@@ -65,7 +65,7 @@ cp "${HOME}/.luarocks/lib/lua/5.1/rex_pcre.so" "${app}/Contents/MacOS"
 python macdeployqtfix.py "${app}/Contents/MacOS/rex_pcre.so" "/usr/local/opt/qt/bin"
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
 cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
-cp "../3rdparty/discord/discord-rpc-osx/discord-rpc/osx-dynamic/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
+cp "../3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 
 if [ -d "../3rdparty/lua_code_formatter" ]; then
   # we renamed lcf at some point

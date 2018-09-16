@@ -49,7 +49,8 @@ cp source/mudlet{.desktop,.png,.svg} build/
 
 cp -r source/3rdparty/lcf build/
 
-cp source/3rdparty/discord/rpc/lib/libdiscord-rpc.so build/lib
+echo "Adding Discord library"
+cp source/3rdparty/discord/rpc/lib/libdiscord-rpc.so build/lib/
 
 # now copy Lua modules we need in
 # this should be improved not to be hardcoded

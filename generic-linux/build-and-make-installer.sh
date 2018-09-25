@@ -33,19 +33,19 @@ commit=$(git rev-parse --short HEAD)
 # Add commit information to version and extract version info itself
 cd src/
 # find out if we do a dev or a release build
-dev=$(perl -lne 'print $1 if /^BUILD = (.*)$/' < src.pro)
+dev=$(perl -lne 'print $1 if /^BUILD = (.*)$/' < mudlet.pro)
 if [ ! -z "${dev}" ]; then
   MUDLET_VERSION_BUILD="-dev-$commit"
   export MUDLET_VERSION_BUILD
 fi
-version=$(perl -lne 'print $1 if /^VERSION = (.+)/' < src.pro)
+version=$(perl -lne 'print $1 if /^VERSION = (.+)/' < mudlet.pro)
 cd ..
 
 mkdir -p build
 cd build/
 
 # Compile using all available cores
-qmake ../src/src.pro
+qmake ../src/mudlet.pro
 make -j "$(nproc)"
 
 # now run the actual installer creation script

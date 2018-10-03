@@ -66,11 +66,14 @@ python macdeployqtfix.py "${app}/Contents/MacOS/Mudlet" "/usr/local/opt/qt/bin"
 
 # Bundle in dynamically loaded libraries
 cp "${HOME}/.luarocks/lib/lua/5.1/lfs.so" "${app}/Contents/MacOS"
+
 cp "${HOME}/.luarocks/lib/lua/5.1/rex_pcre.so" "${app}/Contents/MacOS"
-# rex_pcre has to be adjusted to load libcpre from the same location
+# rex_pcre has to be adjusted to load libpcre from the same location
 python macdeployqtfix.py "${app}/Contents/MacOS/rex_pcre.so" "/usr/local/opt/qt/bin"
+
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
 cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
+
 if [ -d "../3rdparty/lua_code_formatter" ]; then
   # we renamed lcf at some point
   LCF_NAME="lua_code_formatter"

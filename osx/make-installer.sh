@@ -90,7 +90,10 @@ cp -r "../3rdparty/${LCF_NAME}" "${app}/Contents/MacOS"
 if [ "${LCF_NAME}" != "lcf" ]; then
   mv "${app}/Contents/MacOS/${LCF_NAME}" "${app}/Contents/MacOS/lcf"
 fi
+
 cp "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
+# yajl has to be adjusted to load libyajl from the same location
+python macdeployqtfix.py "${app}/Contents/MacOS/yajl.so" "/usr/local/opt/qt/bin"
 
 # Edit some nice plist entries, don't fail if entries already exist
 /usr/libexec/PlistBuddy -c "Add CFBundleName string Mudlet" "${app}/Contents/Info.plist" || true

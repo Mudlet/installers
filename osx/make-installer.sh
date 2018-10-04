@@ -54,6 +54,7 @@ luarocks-5.1 --local install LuaFileSystem
 luarocks-5.1 --local install lrexlib-pcre
 luarocks-5.1 --local install LuaSQL-SQLite3 SQLITE_DIR=/usr/local/opt/sqlite
 luarocks-5.1 --local install luautf8
+luarocks-5.1 --local install lua-yajl
 
 npm install -g ArmorText/node-appdmg#feature/background-hack
 
@@ -65,11 +66,20 @@ python macdeployqtfix.py "${app}/Contents/MacOS/Mudlet" "/usr/local/opt/qt/bin"
 
 # Bundle in dynamically loaded libraries
 cp "${HOME}/.luarocks/lib/lua/5.1/lfs.so" "${app}/Contents/MacOS"
+
 cp "${HOME}/.luarocks/lib/lua/5.1/rex_pcre.so" "${app}/Contents/MacOS"
-# rex_pcre has to be adjusted to load libcpre from the same location
+# rex_pcre has to be adjusted to load libpcre from the same location
 python macdeployqtfix.py "${app}/Contents/MacOS/rex_pcre.so" "/usr/local/opt/qt/bin"
+
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
+cp /usr/local/opt/sqlite/lib/libsqlite3.0.dylib  "${app}/Contents/Frameworks/"
+# sqlite3 has to be adjusted to load libsqlite from the same location
+python macdeployqtfix.py "${app}/Contents/Frameworks/libsqlite3.0.dylib" "/usr/local/opt/qt/bin"
+# need to adjust sqlite3.lua manually as it is a level lower than expected...
+install_name_tool -change "/usr/local/opt/sqlite/lib/libsqlite3.0.dylib" "@executable_path/../../Frameworks/libsqlite3.0.dylib" "${app}/Contents/MacOS/luasql/sqlite3.so"
+
 cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
+
 cp "../3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 
 if [ -d "../3rdparty/lua_code_formatter" ]; then
@@ -82,6 +92,10 @@ cp -r "../3rdparty/${LCF_NAME}" "${app}/Contents/MacOS"
 if [ "${LCF_NAME}" != "lcf" ]; then
   mv "${app}/Contents/MacOS/${LCF_NAME}" "${app}/Contents/MacOS/lcf"
 fi
+
+cp "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
+# yajl has to be adjusted to load libyajl from the same location
+python macdeployqtfix.py "${app}/Contents/MacOS/yajl.so" "/usr/local/opt/qt/bin"
 
 # Edit some nice plist entries, don't fail if entries already exist
 /usr/libexec/PlistBuddy -c "Add CFBundleName string Mudlet" "${app}/Contents/Info.plist" || true

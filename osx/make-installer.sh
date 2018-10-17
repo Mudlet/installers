@@ -36,7 +36,7 @@ fi
 
 # install installer dependencies
 brew update
-BREWS="sqlite3 lua@5.1 node wget luarocks"
+BREWS="sqlite3 lua@5.1 node@8 wget luarocks"
 for i in $BREWS; do
   brew outdated | grep -q "$i" && brew upgrade "$i"
 done

@@ -56,7 +56,7 @@ luarocks-5.1 --local install LuaSQL-SQLite3 SQLITE_DIR=/usr/local/opt/sqlite
 luarocks-5.1 --local install luautf8
 luarocks-5.1 --local install lua-yajl
 
-npm install -g ArmorText/node-appdmg#feature/background-hack
+npm install -g appdmg
 
 # Bundle in Qt libraries
 macdeployqt "${app}"

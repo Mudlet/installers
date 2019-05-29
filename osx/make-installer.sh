@@ -56,6 +56,8 @@ luarocks-5.1 --local install LuaSQL-SQLite3 SQLITE_DIR=/usr/local/opt/sqlite
 luarocks-5.1 --local install luautf8
 luarocks-5.1 --local install lua-yajl
 
+# Ensure Homebrew's npm is used, instead of an outdated one
+PATH=/usr/local/bin:$PATH
 npm install -g appdmg
 
 # Bundle in Qt libraries

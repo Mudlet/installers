@@ -75,8 +75,13 @@ done
 # extract linuxdeployqt since some environments (like travis) don't allow FUSE
 ./linuxdeployqt.AppImage --appimage-extract
 
+echo "Path is: "${PATH}"
+
+echo "Checking qmake -v to determine Qt version used by linuxdeployqt:"
+qmake -v
+
 echo "Generating AppImage"
-./squashfs-root/AppRun ./build/mudlet -appimage -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqtexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so
+./squashfs-root/AppRun ./build/mudlet -verbose=2 -appimage -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqtexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so
 
 
 # clean up extracted appimage

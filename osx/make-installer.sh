@@ -60,11 +60,17 @@ luarocks-5.1 --local install lua-yajl
 PATH=/usr/local/bin:$PATH
 npm install -g appdmg
 
+echo "Path is: ${PATH}"
+
+echo "Checking qmake -v to determine Qt version used by macdeployqt:"
+qmake -v
+
+echo "Generating AppImage"
 # Bundle in Qt libraries
-macdeployqt "${app}"
+macdeployqt "${app}" -verbose=2
 
 # fix unfinished deployment of macdeployqt
-python macdeployqtfix.py "${app}/Contents/MacOS/Mudlet" "/usr/local/opt/qt/bin"
+python macdeployqtfix.py --verbose "${app}/Contents/MacOS/Mudlet" "/usr/local/opt/qt/bin"
 
 # Bundle in dynamically loaded libraries
 cp "${HOME}/.luarocks/lib/lua/5.1/lfs.so" "${app}/Contents/MacOS"

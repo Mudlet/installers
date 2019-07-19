@@ -75,8 +75,16 @@ done
 # extract linuxdeployqt since some environments (like travis) don't allow FUSE
 ./linuxdeployqt.AppImage --appimage-extract
 
+# a hack to get the Chinese input text plugin for Qt from the Ubuntu package into a location
+# linuxdeployqt will understand
+sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so \
+        /opt/qt512/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so || exit
+
 echo "Generating AppImage"
-./squashfs-root/AppRun ./build/mudlet -appimage -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqtexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
+./squashfs-root/AppRun ./build/mudlet -appimage \
+  -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so \
+  -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so \
+  -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqtexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
 
 
 # clean up extracted appimage

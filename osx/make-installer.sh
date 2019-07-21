@@ -11,14 +11,14 @@ release=""
 
 # find out if we do a release build
 while getopts ":r:" o; do
-  if [ "${o}" = "r" ]; then
-    release="${OPTARG}"
-  else
-    echo "Unknown option -${o}"
-    exit 1
-  fi
+	if [ "${o}" = "r" ]; then
+		release="${OPTARG}"
+	else
+		echo "Unknown option -${o}"
+		exit 1
+	fi
 done
-shift $((OPTIND-1))
+shift $((OPTIND - 1))
 
 # set path to find macdeployqt
 PATH=/usr/local/opt/qt/bin:$PATH
@@ -29,26 +29,26 @@ cd source/build
 app=$(basename "${1}")
 
 if [ -z "$app" ]; then
-  echo "No Mudlet app folder to package given."
-  echo "Usage: $pgm <Mudlet app folder to package>"
-  exit 2
+	echo "No Mudlet app folder to package given."
+	echo "Usage: $pgm <Mudlet app folder to package>"
+	exit 2
 fi
 
 # install installer dependencies
 brew update
 BREWS="sqlite3 lua@5.1 node wget luarocks"
 for i in $BREWS; do
-  brew outdated | grep -q "$i" && brew upgrade "$i"
+	brew outdated | grep -q "$i" && brew upgrade "$i"
 done
 for i in $BREWS; do
-  brew list | grep -q "$i" || brew install "$i"
+	brew list | grep -q "$i" || brew install "$i"
 done
 # create an alias to avoid the need to list the lua dir all the time
 # we want to expand the subshell only once (it's only tmeporary anyways)
 # shellcheck disable=2139
 alias luarocks-5.1="luarocks --lua-dir='$(brew --prefix lua@5.1)'"
 if [ ! -f "macdeployqtfix.py" ]; then
-  wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
+	wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
 fi
 luarocks-5.1 --local install LuaFileSystem
 luarocks-5.1 --local install lrexlib-pcre
@@ -80,7 +80,7 @@ cp "${HOME}/.luarocks/lib/lua/5.1/rex_pcre.so" "${app}/Contents/MacOS"
 python macdeployqtfix.py "${app}/Contents/MacOS/rex_pcre.so" "/usr/local/opt/qt/bin"
 
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
-cp /usr/local/opt/sqlite/lib/libsqlite3.0.dylib  "${app}/Contents/Frameworks/"
+cp /usr/local/opt/sqlite/lib/libsqlite3.0.dylib "${app}/Contents/Frameworks/"
 # sqlite3 has to be adjusted to load libsqlite from the same location
 python macdeployqtfix.py "${app}/Contents/Frameworks/libsqlite3.0.dylib" "/usr/local/opt/qt/bin"
 # need to adjust sqlite3.lua manually as it is a level lower than expected...
@@ -91,14 +91,14 @@ cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
 cp "../3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 
 if [ -d "../3rdparty/lua_code_formatter" ]; then
-  # we renamed lcf at some point
-  LCF_NAME="lua_code_formatter"
+	# we renamed lcf at some point
+	LCF_NAME="lua_code_formatter"
 else
-  LCF_NAME="lcf"
+	LCF_NAME="lcf"
 fi
 cp -r "../3rdparty/${LCF_NAME}" "${app}/Contents/MacOS"
 if [ "${LCF_NAME}" != "lcf" ]; then
-  mv "${app}/Contents/MacOS/${LCF_NAME}" "${app}/Contents/MacOS/lcf"
+	mv "${app}/Contents/MacOS/${LCF_NAME}" "${app}/Contents/MacOS/lcf"
 fi
 
 cp "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
@@ -109,12 +109,12 @@ python macdeployqtfix.py "${app}/Contents/MacOS/yajl.so" "/usr/local/opt/qt/bin"
 /usr/libexec/PlistBuddy -c "Add CFBundleName string Mudlet" "${app}/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Add CFBundleDisplayName string Mudlet" "${app}/Contents/Info.plist" || true
 if [ -z "${release}" ]; then
-  stripped="${app#Mudlet-}"
-  version="${stripped%.app}"
-  shortVersion="${version%%-*}"
+	stripped="${app#Mudlet-}"
+	version="${stripped%.app}"
+	shortVersion="${version%%-*}"
 else
-  version="${release}"
-  shortVersion="${release}"
+	version="${release}"
+	shortVersion="${release}"
 fi
 /usr/libexec/PlistBuddy -c "Add CFBundleShortVersionString string ${shortVersion}" "${app}/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Add CFBundleVersion string ${version}" "${app}/Contents/Info.plist" || true
@@ -128,8 +128,8 @@ fi
 # Sign everything now that we're done modifying contents of the .app file
 # Keychain is already setup in travis.osx.after_success.sh for us
 if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
-  codesign --deep -s "$IDENTITY" "${app}/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/"
-  codesign --deep -s "$IDENTITY" "${app}"
+	codesign --deep -s "$IDENTITY" "${app}/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/"
+	codesign --deep -s "$IDENTITY" "${app}"
 fi
 
 # Generate final .dmg

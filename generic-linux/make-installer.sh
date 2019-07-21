@@ -75,7 +75,7 @@ done
 # extract linuxdeployqt since some environments (like travis) don't allow FUSE
 ./linuxdeployqt.AppImage --appimage-extract
 
-echo "Path is: "${PATH}"
+echo "Path is: ${PATH}"
 
 echo "Checking qmake -v to determine Qt version used by linuxdeployqt:"
 qmake -v

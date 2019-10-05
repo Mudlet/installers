@@ -7,16 +7,16 @@ release=""
 
 # find out if we do a release build
 while getopts ":r:" o; do
-  if [ "${o}" = "r" ]; then
-    release="${OPTARG}"
-    version="${OPTARG}"
+  if [ "$o" = "r" ]; then
+    release="$OPTARG"
+    version="$OPTARG"
   else
-    echo "Unknown option -${o}"
+    echo "Unknown option -$o"
     exit 1
   fi
 done
 shift $((OPTIND-1))
-if [ -z "${release}" ]; then
+if [ -z "$release" ]; then
   version="${1}"
 fi
 
@@ -58,16 +58,16 @@ cp source/3rdparty/discord/rpc/lib/libdiscord-rpc.so build/lib/
 for lib in lfs rex_pcre luasql/sqlite3 zip lua-utf8 yajl
 do
   found=0
-  for path in $(lua -e "print(package.cpath)" | tr ";" "\n")
+  for path in "$(lua -e "print(package.cpath)" | tr ";" "\n")"
   do
     changed_path=${path/\?/${lib}};
-    if [ -e "${changed_path}" ]; then
-      cp -rL "${changed_path}" build/lib/${lib}.so
+    if [ -e "$changed_path" ]; then
+      cp -rL "$changed_path" build/lib/"$lib".so
       found=1
     fi
   done
-  if [ "${found}" -ne "1" ]; then
-    echo "Missing dependency ${lib}, aborting."
+  if [ "$found" -ne "1" ]; then
+    echo "Missing dependency $lib, aborting."
     exit 1
   fi
 done
@@ -91,8 +91,8 @@ echo "Generating AppImage"
 rm -rf squashfs-root/
 
 
-if [ -z "${release}" ]; then
-  output_name="Mudlet-${version}"
+if [ -z "$release" ]; then
+  output_name="Mudlet-$version"
 else
   output_name="Mudlet"
 fi

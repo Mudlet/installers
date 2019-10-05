@@ -15,7 +15,7 @@ while getopts ":r:" o; do
     exit 1
   fi
 done
-shift $((OPTIND-1))
+shift $((OPTIND - 1))
 if [ -z "$release" ]; then
   version="${1}"
 fi
@@ -23,10 +23,10 @@ fi
 # setup linuxdeployqt binary if not found
 if [ "$(getconf LONG_BIT)" = "64" ]; then
   if [[ ! -e linuxdeployqt.AppImage ]]; then
-      # download prepackaged linuxdeployqt. Doesn't seem to have a "latest" url yet
-      echo "linuxdeployqt not found - downloading one."
-      wget -O linuxdeployqt.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
-      chmod +x linuxdeployqt.AppImage
+    # download prepackaged linuxdeployqt. Doesn't seem to have a "latest" url yet
+    echo "linuxdeployqt not found - downloading one."
+    wget -O linuxdeployqt.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+    chmod +x linuxdeployqt.AppImage
   fi
 else
   echo "32bit Linux is currently not supported."
@@ -55,12 +55,10 @@ mkdir -p build/lib/luasql
 
 cp source/3rdparty/discord/rpc/lib/libdiscord-rpc.so build/lib/
 
-for lib in lfs rex_pcre luasql/sqlite3 zip lua-utf8 yajl
-do
+for lib in lfs rex_pcre luasql/sqlite3 zip lua-utf8 yajl; do
   found=0
-  for path in "$(lua -e "print(package.cpath)" | tr ";" "\n")"
-  do
-    changed_path=${path/\?/${lib}};
+  for path in "$(lua -e "print(package.cpath)" | tr ";" "\n")"; do
+    changed_path=${path/\?/${lib}}
     if [ -e "$changed_path" ]; then
       cp -rL "$changed_path" build/lib/"$lib".so
       found=1
@@ -78,7 +76,7 @@ done
 # a hack to get the Chinese input text plugin for Qt from the Ubuntu package into a location
 # linuxdeployqt will understand
 sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so \
-        /opt/qt512/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so || exit
+  /opt/qt512/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so || exit
 
 echo "Generating AppImage"
 ./squashfs-root/AppRun ./build/mudlet -appimage \
@@ -86,10 +84,8 @@ echo "Generating AppImage"
   -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so \
   -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqttexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
 
-
 # clean up extracted appimage
 rm -rf squashfs-root/
-
 
 if [ -z "$release" ]; then
   output_name="Mudlet-$version"

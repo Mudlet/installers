@@ -84,7 +84,7 @@ sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libfcitxplat
 # OpenSSL 1.1
 cp -L /usr/lib/x86_64-linux-gnu/libssl.so* \
       build/lib/
-cp -L /usr/x86_64-linux-gnu/libssl.so* \
+cp -L /lib/x86_64-linux-gnu/libssl.so* \
       build/lib/
 
 echo "Generating AppImage"

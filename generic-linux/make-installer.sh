@@ -93,7 +93,7 @@ echo "Generating AppImage"
   -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so \
   -executable=build/lib/libssl.so.1.1 \
   -executable=build/lib/libssl.so.1.0.0 \
-  -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqtexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
+  -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqttexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
 
 
 # clean up extracted appimage

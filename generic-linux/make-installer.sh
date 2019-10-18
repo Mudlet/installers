@@ -44,8 +44,13 @@ rm -f Mudlet*.AppImage
 cp source/build/mudlet build/
 # get mudlet-lua in there as well so linuxdeployqt bundles it
 cp -rf source/src/mudlet-lua build/
+# and the dictionary files in case the user system doesn't have them (at a known
+# place)
+cp source/src/*.dic build/
+cp source/src/*.aff build/
 # and the .desktop file so linuxdeployqt can pilfer it for info
 cp source/mudlet{.desktop,.png,.svg} build/
+
 
 cp -r source/3rdparty/lcf build/
 

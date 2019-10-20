@@ -40,8 +40,9 @@ mkdir build
 # delete previous appimage as well since we need to regenerate it twice
 rm -f Mudlet*.AppImage
 
-# move the binary up to the build folder
-cp source/build/mudlet build/
+# move the binary up to the build folder (they differ between qmake and cmake,
+# so we use find to find the binary
+find source/build/ -iname mudlet -type f -exec cp '{}' build/ \;
 # get mudlet-lua in there as well so linuxdeployqt bundles it
 cp -rf source/src/mudlet-lua build/
 # and the dictionary files in case the user system doesn't have them (at a known

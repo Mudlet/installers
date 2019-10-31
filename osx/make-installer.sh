@@ -33,6 +33,8 @@ if [ -z "$app" ]; then
   echo "Usage: $pgm <Mudlet app folder to package>"
   exit 2
 fi
+app=$(find . -iname "${app}" -type d)
+echo "Deploying ${app}"
 
 # install installer dependencies
 brew update
@@ -60,6 +62,10 @@ luarocks-5.1 --local install lua-yajl
 PATH=/usr/local/bin:$PATH
 npm install -g appdmg
 
+# copy in 3rd party framework first so there is the chance of things getting fixed if it doesn't exist
+if [ ! -d "${app}/Contents/Frameworks/Sparkle.framework" ]; then
+  cp -r "../3rdparty/cocoapods/Pods/Sparkle/Sparkle.framework" "${app}/Contents/Frameworks"
+fi
 # Bundle in Qt libraries
 macdeployqt "${app}"
 
@@ -126,11 +132,12 @@ if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
 fi
 
 # Generate final .dmg
-cd ../..
-rm -f ~/Desktop/Mudlet*.dmg
+cd ../../
+rm -f ~/Desktop/[mM]udlet*.dmg
 
+pwd
 # Modify appdmg config file according to the app file to package
-perl -pi -e "s/Mudlet.*\\.app/${app}/" appdmg/mudlet-appdmg.json
+perl -pi -e "s|build/.*Mudlet.*\\.app|build/${app}|i" appdmg/mudlet-appdmg.json
 
 # Last: build *.dmg file
-appdmg appdmg/mudlet-appdmg.json "${HOME}/Desktop/${app%.*}.dmg"
+appdmg appdmg/mudlet-appdmg.json "${HOME}/Desktop/$(basename "${app%.*}").dmg"

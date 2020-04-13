@@ -36,10 +36,12 @@ if [ -z "$app" ]; then
   echo "Usage: $pgm <Mudlet app folder to package>"
   exit 2
 fi
+app=$(find . -iname "${app}" -type d)
+echo "Deploying ${app}"
 
 # install installer dependencies
 brew update
-BREWS="sqlite3 lua@5.1 node@8 wget luarocks"
+BREWS="sqlite3 lua@5.1 node wget luarocks"
 for i in $BREWS; do
   brew outdated | grep -q "$i" && brew upgrade "$i"
 done
@@ -59,8 +61,14 @@ luarocks-5.1 --local install LuaSQL-SQLite3 SQLITE_DIR=/usr/local/opt/sqlite
 luarocks-5.1 --local install luautf8
 luarocks-5.1 --local install lua-yajl
 
-npm install -g ArmorText/node-appdmg#feature/background-hack
+# Ensure Homebrew's npm is used, instead of an outdated one
+PATH=/usr/local/bin:$PATH
+npm install -g appdmg
 
+# copy in 3rd party framework first so there is the chance of things getting fixed if it doesn't exist
+if [ ! -d "${app}/Contents/Frameworks/Sparkle.framework" ]; then
+  cp -r "../3rdparty/cocoapods/Pods/Sparkle/Sparkle.framework" "${app}/Contents/Frameworks"
+fi
 # Bundle in Qt libraries
 macdeployqt "${app}"
 
@@ -123,16 +131,16 @@ fi
 # Sign everything now that we're done modifying contents of the .app file
 # Keychain is already setup in travis.osx.after_success.sh for us
 if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
-  codesign --deep -s "$IDENTITY" "${app}/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app/"
   codesign --deep -s "$IDENTITY" "${app}"
 fi
 
 # Generate final .dmg
-cd ../..
-rm -f ~/Desktop/Mudlet*.dmg
+cd ../../
+rm -f ~/Desktop/[mM]udlet*.dmg
 
+pwd
 # Modify appdmg config file according to the app file to package
-perl -pi -e "s/Mudlet.*\\.app/${app}/" appdmg/mudlet-appdmg.json
+perl -pi -e "s|build/.*Mudlet.*\\.app|build/${app}|i" appdmg/mudlet-appdmg.json
 
 # Last: build *.dmg file
-appdmg appdmg/mudlet-appdmg.json "${HOME}/Desktop/${app%.*}.dmg"
+appdmg appdmg/mudlet-appdmg.json "${HOME}/Desktop/$(basename "${app%.*}").dmg"

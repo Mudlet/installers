@@ -4,6 +4,9 @@
 set -e
 shopt -s expand_aliases
 
+# enable temporary trace mode
+set -x
+
 # extract program name for message
 pgm=$(basename "$0")
 

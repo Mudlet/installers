@@ -12,7 +12,7 @@ pgm=$(basename "$0")
 
 release=""
 
-# find out if we do a release build
+# find out if we do a release or ptb build
 while getopts ":r:" o; do
   if [ "${o}" = "r" ]; then
     release="${OPTARG}"
@@ -119,6 +119,11 @@ else
   version="${release}"
   shortVersion="${release}"
 fi
+
+echo "release ${release}"
+echo "version ${version}"
+echo "shortVersion ${shortVersion}"
+
 /usr/libexec/PlistBuddy -c "Add CFBundleShortVersionString string ${shortVersion}" "${app}/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Add CFBundleVersion string ${version}" "${app}/Contents/Info.plist" || true
 

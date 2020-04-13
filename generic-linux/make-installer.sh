@@ -40,12 +40,18 @@ mkdir build
 # delete previous appimage as well since we need to regenerate it twice
 rm -f Mudlet*.AppImage
 
-# move the binary up to the build folder
-cp source/build/mudlet build/
+# move the binary up to the build folder (they differ between qmake and cmake,
+# so we use find to find the binary
+find source/build/ -iname mudlet -type f -exec cp '{}' build/ \;
 # get mudlet-lua in there as well so linuxdeployqt bundles it
 cp -rf source/src/mudlet-lua build/
+# and the dictionary files in case the user system doesn't have them (at a known
+# place)
+cp source/src/*.dic build/
+cp source/src/*.aff build/
 # and the .desktop file so linuxdeployqt can pilfer it for info
 cp source/mudlet{.desktop,.png,.svg} build/
+
 
 cp -r source/3rdparty/lcf build/
 
@@ -75,8 +81,26 @@ done
 # extract linuxdeployqt since some environments (like travis) don't allow FUSE
 ./linuxdeployqt.AppImage --appimage-extract
 
+# a hack to get the Chinese input text plugin for Qt from the Ubuntu package into a location
+# linuxdeployqt will understand
+sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so \
+        /opt/qt512/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so || exit
+
+# Bundle libssl.so so Mudlet works on platforms that only distribute
+# OpenSSL 1.1
+cp -L /usr/lib/x86_64-linux-gnu/libssl.so* \
+      build/lib/
+cp -L /lib/x86_64-linux-gnu/libssl.so* \
+      build/lib/
+
 echo "Generating AppImage"
-./squashfs-root/AppRun ./build/mudlet -appimage -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so -extra-plugins=texttospeech/libqttexttospeech_flite.so
+./squashfs-root/AppRun ./build/mudlet -appimage \
+  -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so \
+  -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so \
+  -executable=build/lib/libssl.so.1.1 \
+  -executable=build/lib/libssl.so.1.0.0 \
+  -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqttexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
+
 
 # clean up extracted appimage
 rm -rf squashfs-root/

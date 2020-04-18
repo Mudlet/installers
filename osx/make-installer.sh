@@ -60,7 +60,9 @@ luarocks-5.1 --local install luautf8
 luarocks-5.1 --local install lua-yajl
 # This is the Brimworks one (same as lua-yajl) note the hyphen, the one without
 # is the Kelper project one which has the, recently (2020), troublesome
-# dependency on zziplib (libzzip):
+# dependency on zziplib (libzzip), however to avoid clashes in the field
+# it installs itself in brimworks subdirectory which must be accomodated
+# in where we put it and how we "require" it:
 luarocks-5.1 --local install lua-zip
 
 
@@ -95,7 +97,11 @@ install_name_tool -change "/usr/local/opt/sqlite/lib/libsqlite3.0.dylib" "@execu
 cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
 
 # The lua-zip rock:
-cp "${HOME}/.luarocks/lib/lua/5.1/brimworks/zip.so" "${app}/Contents/MacOS"
+# Also need to adjust the zip.so manually so that it can be at a level down from
+# the executable:
+mkdir "${app}/Contents/MacOS/brimworks"
+cp "${HOME}/.luarocks/lib/lua/5.1/brimworks/zip.so" "${app}/Contents/MacOS/brimworks"
+python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local/opt/qt/bin"
 
 cp "../3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 

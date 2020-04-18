@@ -62,6 +62,9 @@ luarocks-5.1 --local install lua-yajl
 # is the Kelper project one which has the, recently (2020), troublesome
 # dependency on zziplib (libzzip):
 luarocks-5.1 --local install lua-zip
+echo "=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*"
+luarocks-5.1 --local show lua-zip
+echo "*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*="
 
 
 # Ensure Homebrew's npm is used, instead of an outdated one

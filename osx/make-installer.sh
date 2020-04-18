@@ -94,11 +94,8 @@ install_name_tool -change "/usr/local/opt/sqlite/lib/libsqlite3.0.dylib" "@execu
 
 cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
 
-# The lua-yajl rock - wasn't listed here in past but was still in installer?
-cp "${HOME}/.luarocks/lib/lua/5.1/brimworks/yajl.so" "${app}/Contents/MacOS"
-
 # The lua-zip rock:
-cp "${HOME}/.luarocks/lib/lua/5.1/brimworks/zip.so" "${app}/Contents/MacOS"
+cp "${HOME}/.luarocks/lib/lua/5.1/zip.so" "${app}/Contents/MacOS"
 
 cp "../3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 

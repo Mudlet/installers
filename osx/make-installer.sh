@@ -16,6 +16,8 @@ release=""
 while getopts ":r:" o; do
   if [ "${o}" = "r" ]; then
     release="${OPTARG}"
+  elif [ "${o}" = "p" ]; then
+    ptb="${OPTARG}"
   else
     echo "Unknown option -${o}"
     exit 1
@@ -109,8 +111,14 @@ cp "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
 python macdeployqtfix.py "${app}/Contents/MacOS/yajl.so" "/usr/local/opt/qt/bin"
 
 # Edit some nice plist entries, don't fail if entries already exist
-/usr/libexec/PlistBuddy -c "Add CFBundleName string Mudlet" "${app}/Contents/Info.plist" || true
-/usr/libexec/PlistBuddy -c "Add CFBundleDisplayName string Mudlet" "${app}/Contents/Info.plist" || true
+if [ -z "${ptb}" ]; then
+  /usr/libexec/PlistBuddy -c "Add CFBundleName string Mudlet" "${app}/Contents/Info.plist" || true
+  /usr/libexec/PlistBuddy -c "Add CFBundleDisplayName string Mudlet" "${app}/Contents/Info.plist" || true
+else
+  /usr/libexec/PlistBuddy -c "Add CFBundleName string Mudlet PTB" "${app}/Contents/Info.plist" || true
+  /usr/libexec/PlistBuddy -c "Add CFBundleDisplayName string Mudlet PTB" "${app}/Contents/Info.plist" || true
+fi
+
 if [ -z "${release}" ]; then
   stripped="${app#Mudlet-}"
   version="${stripped%.app}"
@@ -128,7 +136,11 @@ echo "shortVersion ${shortVersion}"
 /usr/libexec/PlistBuddy -c "Add CFBundleVersion string ${version}" "${app}/Contents/Info.plist" || true
 
 # Sparkle settings, see https://sparkle-project.org/documentation/customization/#infoplist-settings
-/usr/libexec/PlistBuddy -c "Add SUFeedURL string https://feeds.dblsqd.com/MKMMR7HNSP65PquQQbiDIw/release/mac/x86_64/appcast" "${app}/Contents/Info.plist" || true
+if [ -z "${ptb}" ]; then
+  /usr/libexec/PlistBuddy -c "Add SUFeedURL string https://feeds.dblsqd.com/MKMMR7HNSP65PquQQbiDIw/release/mac/x86_64/appcast" "${app}/Contents/Info.plist" || true
+else
+  /usr/libexec/PlistBuddy -c "Add SUFeedURL string https://feeds.dblsqd.com/MKMMR7HNSP65PquQQbiDIw/public-test-build/mac/x86_64/appcast" "${app}/Contents/Info.plist" || true
+fi
 /usr/libexec/PlistBuddy -c "Add SUEnableAutomaticChecks bool true" "${app}/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Add SUAllowsAutomaticUpdates bool true" "${app}/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Add SUAutomaticallyUpdate bool true" "${app}/Contents/Info.plist" || true

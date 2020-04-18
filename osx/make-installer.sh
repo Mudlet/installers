@@ -46,7 +46,7 @@ for i in $BREWS; do
   brew list | grep -q "$i" || brew install "$i"
 done
 # create an alias to avoid the need to list the lua dir all the time
-# we want to expand the subshell only once (it's only tmeporary anyways)
+# we want to expand the subshell only once (it's only temporary anyways)
 # shellcheck disable=2139
 alias luarocks-5.1="luarocks --lua-dir='$(brew --prefix lua@5.1)'"
 if [ ! -f "macdeployqtfix.py" ]; then
@@ -55,8 +55,14 @@ fi
 luarocks-5.1 --local install LuaFileSystem
 luarocks-5.1 --local install lrexlib-pcre
 luarocks-5.1 --local install LuaSQL-SQLite3 SQLITE_DIR=/usr/local/opt/sqlite
+# Although it is called luautf8 here it builds a file called lua-utf8.so:
 luarocks-5.1 --local install luautf8
 luarocks-5.1 --local install lua-yajl
+# This is the Brimworks one (same as lua-yajl) note the hyphen, the one without
+# is the Kelper project one which has the, recently (2020), troublesome
+# dependency on zziplib (libzzip):
+luarocks-5.1 --local install lua-zip
+
 
 # Ensure Homebrew's npm is used, instead of an outdated one
 PATH=/usr/local/bin:$PATH
@@ -87,6 +93,12 @@ python macdeployqtfix.py "${app}/Contents/Frameworks/libsqlite3.0.dylib" "/usr/l
 install_name_tool -change "/usr/local/opt/sqlite/lib/libsqlite3.0.dylib" "@executable_path/../../Frameworks/libsqlite3.0.dylib" "${app}/Contents/MacOS/luasql/sqlite3.so"
 
 cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
+
+# The lua-yajl rock - wasn't listed here in past but was still in installer?
+cp "${HOME}/.luarocks/lib/lua/5.1/brimworks/yajl.so" "${app}/Contents/MacOS"
+
+# The lua-zip rock:
+cp "${HOME}/.luarocks/lib/lua/5.1/brimworks/zip.so" "${app}/Contents/MacOS"
 
 cp "../3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 

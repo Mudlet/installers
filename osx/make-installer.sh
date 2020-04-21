@@ -39,6 +39,11 @@ if [ -z "$app" ]; then
   exit 2
 fi
 app=$(find . -iname "${app}" -type d)
+if [ -z "${app}" ]; then
+  echo "error: coudln't determine location of the ./app folder"
+  exit 1
+fi
+
 echo "Deploying ${app}"
 
 # install installer dependencies

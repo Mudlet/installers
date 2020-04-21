@@ -16,14 +16,15 @@ release=""
 while getopts ":r:" o; do
   if [ "${o}" = "r" ]; then
     release="${OPTARG}"
+    shift $((OPTIND-1))
   elif [ "${o}" = "p" ]; then
     ptb="${OPTARG}"
+    shift $((OPTIND-1))
   else
     echo "Unknown option -${o}"
     exit 1
   fi
 done
-shift $((OPTIND-1))
 
 # set path to find macdeployqt
 PATH=/usr/local/opt/qt/bin:$PATH
@@ -40,7 +41,7 @@ if [ -z "$app" ]; then
 fi
 app=$(find . -iname "${app}" -type d)
 if [ -z "${app}" ]; then
-  echo "error: coudln't determine location of the ./app folder"
+  echo "error: couldn't determine location of the ./app folder"
   exit 1
 fi
 

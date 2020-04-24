@@ -45,6 +45,9 @@ rm -f Mudlet*.AppImage
 find source/build/ -iname mudlet -type f -exec cp '{}' build/ \;
 # get mudlet-lua in there as well so linuxdeployqt bundles it
 cp -rf source/src/mudlet-lua build/
+# copy Lua translations
+mkdir -p build/translations/lua_translations
+cp -rf source/translations/lua_translations build/translations/
 # and the dictionary files in case the user system doesn't have them (at a known
 # place)
 cp source/src/*.dic build/

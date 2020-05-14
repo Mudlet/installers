@@ -4,9 +4,6 @@
 set -e
 shopt -s expand_aliases
 
-# enable temporary trace mode
-set -x
-
 # extract program name for message
 pgm=$(basename "$0")
 
@@ -26,10 +23,6 @@ while getopts ":pr:" option; do
     exit 1
   fi
 done
-
-echo "release $release"
-echo "ptb $ptb"
-echo "1 ${1}"
 
 # set path to find macdeployqt
 PATH=/usr/local/opt/qt/bin:$PATH
@@ -138,10 +131,6 @@ else
   version="${release}"
   shortVersion="${release}"
 fi
-
-echo "release ${release}"
-echo "version ${version}"
-echo "shortVersion ${shortVersion}"
 
 /usr/libexec/PlistBuddy -c "Add CFBundleShortVersionString string ${shortVersion}" "${app}/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Add CFBundleVersion string ${version}" "${app}/Contents/Info.plist" || true

@@ -14,18 +14,22 @@ release=""
 ptb=""
 
 # find out if we do a release or ptb build
-while getopts ":r:" o; do
-  if [ "${o}" = "r" ]; then
+while getopts ":pr:" option; do
+  if [ "${option}" = "r" ]; then
     release="${OPTARG}"
     shift $((OPTIND-1))
-  elif [ "${o}" = "p" ]; then
-    ptb="${OPTARG}"
+  elif [ "${option}" = "p" ]; then
+    ptb="yep"
     shift $((OPTIND-1))
   else
-    echo "Unknown option -${o}"
+    echo "Unknown option -${option}"
     exit 1
   fi
 done
+
+echo "release $release"
+echo "ptb $ptb"
+echo "1 ${1}"
 
 # set path to find macdeployqt
 PATH=/usr/local/opt/qt/bin:$PATH

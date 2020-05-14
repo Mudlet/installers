@@ -11,6 +11,7 @@ set -x
 pgm=$(basename "$0")
 
 release=""
+ptb=""
 
 # find out if we do a release or ptb build
 while getopts ":r:" o; do

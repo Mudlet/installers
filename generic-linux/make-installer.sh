@@ -45,6 +45,10 @@ rm -f Mudlet*.AppImage
 find source/build/ -iname mudlet -type f -exec cp '{}' build/ \;
 # get mudlet-lua in there as well so linuxdeployqt bundles it
 cp -rf source/src/mudlet-lua build/
+# copy Lua translations
+# only copy if folder exists
+mkdir -p build/translations/lua
+[ -d source/translations/lua ] && cp -rf source/translations/lua build/translations/
 # and the dictionary files in case the user system doesn't have them (at a known
 # place)
 cp source/src/*.dic build/
@@ -81,17 +85,23 @@ done
 # extract linuxdeployqt since some environments (like travis) don't allow FUSE
 ./linuxdeployqt.AppImage --appimage-extract
 
-# a hack to get the Chinese input text plugin for Qt from the Ubuntu package into a location
-# linuxdeployqt will understand
-sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so \
-        /opt/qt512/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so || exit
+# a hack to get the Chinese input text plugin for Qt from the Ubuntu package
+# into the Qt for /opt package directory
+if [ -n "${QTDIR}" ]; then
+  sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so \
+          "${QTDIR}/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so" || exit
+fi
 
 # Bundle libssl.so so Mudlet works on platforms that only distribute
 # OpenSSL 1.1
 cp -L /usr/lib/x86_64-linux-gnu/libssl.so* \
-      build/lib/
+      build/lib/ || true
 cp -L /lib/x86_64-linux-gnu/libssl.so* \
-      build/lib/
+      build/lib/ || true
+if [ -z "$(ls build/lib/libssl.so*)" ]; then
+  echo "No OpenSSL libraries to copy found. Aborting..."
+  exit 1
+fi
 
 echo "Generating AppImage"
 ./squashfs-root/AppRun ./build/mudlet -appimage \

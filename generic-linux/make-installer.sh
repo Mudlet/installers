@@ -29,7 +29,7 @@ if [ "$(getconf LONG_BIT)" = "64" ]; then
   if [[ ! -e linuxdeployqt.AppImage ]]; then
       # download prepackaged linuxdeployqt. Doesn't seem to have a "latest" url yet
       echo "linuxdeployqt not found - downloading one."
-      wget -O linuxdeployqt.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+      wget --quiet -O linuxdeployqt.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
       chmod +x linuxdeployqt.AppImage
   fi
 else

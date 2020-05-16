@@ -121,7 +121,7 @@ rm -rf squashfs-root/
 
 
 if [ -z "${release}" ]; then
-    output_name="Mudlet-${version}"
+  output_name="Mudlet-${version}"
 else
   if [ -z "${ptb}" ]; then
     output_name="Mudlet"

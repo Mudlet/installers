@@ -4,18 +4,22 @@
 set -e
 
 release=""
+ptb=""
 
 # find out if we do a release build
-while getopts ":r:" o; do
-  if [ "${o}" = "r" ]; then
+while getopts ":pr:" option; do
+  if [ "${option}" = "r" ]; then
     release="${OPTARG}"
     version="${OPTARG}"
+    shift $((OPTIND-1))
+  elif [ "${option}" = "p" ]; then
+    ptb="yep"
+    shift $((OPTIND-1))
   else
-    echo "Unknown option -${o}"
+    echo "Unknown option -${option}"
     exit 1
   fi
 done
-shift $((OPTIND-1))
 if [ -z "${release}" ]; then
   version="${1}"
 fi
@@ -29,7 +33,7 @@ if [ "$(getconf LONG_BIT)" = "64" ]; then
       chmod +x linuxdeployqt.AppImage
   fi
 else
-  echo "32bit Linux is currently not supported."
+  echo "32bit Linux is currently not supported by the AppImage."
   exit 2
 fi
 
@@ -117,8 +121,14 @@ rm -rf squashfs-root/
 
 
 if [ -z "${release}" ]; then
-  output_name="Mudlet-${version}"
+    output_name="Mudlet-${version}"
 else
-  output_name="Mudlet"
+  if [ -z "${ptb}" ]; then
+    output_name="Mudlet"
+  else
+    output_name="Mudlet PTB"
+  fi
 fi
+
+echo "output_name: ${output_name}"
 mv Mudlet*.AppImage "$output_name.AppImage"

@@ -46,7 +46,9 @@ fi
 echo "Deploying ${app}"
 
 # install installer dependencies
-brew update
+echo "Running brew update-reset"
+brew update-reset
+echo "Finished with brew update-reset"
 BREWS="sqlite3 lua@5.1 node wget luarocks"
 for i in $BREWS; do
   brew outdated | grep -q "$i" && brew upgrade "$i"

@@ -68,7 +68,11 @@ luarocks-5.1 --local install lrexlib-pcre
 luarocks-5.1 --local install LuaSQL-SQLite3 SQLITE_DIR=/usr/local/opt/sqlite
 # Although it is called luautf8 here it builds a file called lua-utf8.so:
 luarocks-5.1 --local install luautf8
-luarocks-5.1 --local install lua-yajl
+if [ "${USE_CJSON}" = "Y" ] ; then
+  luarocks-5.1 --local install lua-cmake
+else
+  luarocks-5.1 --local install lua-yajl
+fi
 # This is the Brimworks one (same as lua-yajl) note the hyphen, the one without
 # is the Kelper project one which has the, recently (2020), troublesome
 # dependency on zziplib (libzzip), however to avoid clashes in the field
@@ -127,9 +131,11 @@ if [ "${LCF_NAME}" != "lcf" ]; then
   mv "${app}/Contents/MacOS/${LCF_NAME}" "${app}/Contents/MacOS/lcf"
 fi
 
-cp "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
-# yajl has to be adjusted to load libyajl from the same location
-python macdeployqtfix.py "${app}/Contents/MacOS/yajl.so" "/usr/local/opt/qt/bin"
+if [ "${USE_CJSON}" != "Y" ] ; then
+  cp "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
+  # yajl has to be adjusted to load libyajl from the same location
+  python macdeployqtfix.py "${app}/Contents/MacOS/yajl.so" "/usr/local/opt/qt/bin"
+fi
 
 # Edit some nice plist entries, don't fail if entries already exist
 if [ -z "${ptb}" ]; then

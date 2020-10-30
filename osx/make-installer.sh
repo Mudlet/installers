@@ -51,10 +51,12 @@ brew update-reset
 echo "Finished with brew update-reset"
 BREWS="sqlite3 lua lua@5.1 node luarocks"
 for i in $BREWS; do
+  echo "Checking if $i needs an upgrade..."
   brew outdated | grep -q "$i" && brew upgrade "$i"
 done
 for i in $BREWS; do
-  brew list | grep -q "$i" || brew install "$i"
+  echo "Checking if $i needs an install..."
+  brew list --formulae | grep -q "$i" || brew install "$i"
 done
 # create an alias to avoid the need to list the lua dir all the time
 # we want to expand the subshell only once (it's only temporary anyways)

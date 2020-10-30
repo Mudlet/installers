@@ -78,10 +78,8 @@ luarocks-5.1 --local install lua-zip
 
 
 # Ensure Homebrew's npm is used, instead of an outdated one
-echo "Running npm install. PATH is $PATH"
 PATH=/usr/local/bin:$PATH
 npm install -g appdmg
-echo "Successfully ran npm install."
 
 # copy in 3rd party framework first so there is the chance of things getting fixed if it doesn't exist
 if [ ! -d "${app}/Contents/Frameworks/Sparkle.framework" ]; then

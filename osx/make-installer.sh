@@ -78,9 +78,6 @@ luarocks-5.1 --local install lua-zip
 
 
 # Ensure Homebrew's npm is used, instead of an outdated one
-"3 Checking /Users/travis/.npm-global..."
-file /Users/travis/.npm-global
-
 echo "Running npm install. PATH is $PATH"
 PATH=/usr/local/bin:$PATH
 npm install -g appdmg

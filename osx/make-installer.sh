@@ -60,6 +60,9 @@ done
 # we want to expand the subshell only once (it's only temporary anyways)
 # shellcheck disable=2139
 alias luarocks-5.1="luarocks --lua-dir='$(brew --prefix lua@5.1)'"
+echo "brew --prefix lua@5.1 is..."
+brew --prefix lua@5.1
+echo "done with brew --prefix lua@5.1"
 if [ ! -f "macdeployqtfix.py" ]; then
   wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
 fi

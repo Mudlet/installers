@@ -49,7 +49,7 @@ echo "Deploying ${app}"
 echo "Running brew update-reset"
 brew update-reset
 echo "Finished with brew update-reset"
-BREWS="sqlite3 lua@5.1 node luarocks"
+BREWS="sqlite3 lua lua@5.1 node luarocks"
 for i in $BREWS; do
   brew outdated | grep -q "$i" && brew upgrade "$i"
 done

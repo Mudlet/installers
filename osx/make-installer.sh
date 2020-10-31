@@ -82,7 +82,7 @@ luarocks-5.1 --local install lua-zip
 # Ensure Homebrew's npm is used, instead of an outdated one
 PATH=/usr/local/bin:$PATH
 # Add node path, as node seems to error when it's missing
-mkdir -p /Users/$HOME/.npm-global/lib
+mkdir -p /Users/"$HOME"/.npm-global/lib
 npm install -g appdmg
 
 # copy in 3rd party framework first so there is the chance of things getting fixed if it doesn't exist

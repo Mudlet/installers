@@ -2,6 +2,7 @@
 
 # abort script if any command fails
 set -e
+set -x
 
 release=""
 ptb=""

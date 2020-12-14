@@ -75,6 +75,7 @@ cp -r "$SOURCE_DIR"/3rdparty/lcf build/
 # now copy Lua modules we need in
 # this should be improved not to be hardcoded
 mkdir -p build/lib/luasql
+mkdir -p build/lib/brimworks
 
 cp "$SOURCE_DIR"/3rdparty/discord/rpc/lib/libdiscord-rpc.so build/lib/
 

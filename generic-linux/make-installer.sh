@@ -78,7 +78,7 @@ mkdir -p build/lib/luasql
 
 cp "$SOURCE_DIR"/3rdparty/discord/rpc/lib/libdiscord-rpc.so build/lib/
 
-for lib in lfs rex_pcre luasql/sqlite3 zip lua-utf8 yajl
+for lib in lfs rex_pcre luasql/sqlite3 brimworks/zip lua-utf8 yajl
 do
   found=0
   for path in $(luarocks path --lr-cpath | tr ";" "\n")

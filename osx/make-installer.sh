@@ -45,19 +45,22 @@ fi
 
 echo "Deploying ${app}"
 
-# install installer dependencies
-echo "Running brew update-reset"
-brew update-reset
-echo "Finished with brew update-reset"
-BREWS="sqlite3 lua lua@5.1 node luarocks"
-for i in $BREWS; do
-  echo "Checking if $i needs an upgrade..."
-  brew outdated | grep -q "$i" && brew upgrade "$i"
-done
-for i in $BREWS; do
-  echo "Checking if $i needs an install..."
-  brew list --formulae | grep -q "$i" || brew install "$i"
-done
+# install installer dependencies, except on Github where they're preinstalled at this point
+if [ -z "$GITHUB_REPOSITORY" ]; then
+  echo "Running brew update-reset"
+  brew update-reset
+  echo "Finished with brew update-reset"
+  BREWS="sqlite3 lua lua@5.1 node luarocks"
+  for i in $BREWS; do
+    echo "Checking if $i needs an upgrade..."
+    brew outdated | grep -q "$i" && brew upgrade "$i"
+  done
+  for i in $BREWS; do
+    echo "Checking if $i needs an install..."
+    brew list --formulae | grep -q "$i" || brew install "$i"
+  done
+fi
+
 # create an alias to avoid the need to list the lua dir all the time
 # we want to expand the subshell only once (it's only temporary anyways)
 # shellcheck disable=2139

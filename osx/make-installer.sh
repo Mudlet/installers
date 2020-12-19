@@ -91,6 +91,7 @@ if [ ! -f "macdeployqtfix.py" ]; then
   wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
 fi
 
+find / -name "libzip*"
 
 # Ensure Homebrew's npm is used, instead of an outdated one
 PATH=/usr/local/bin:$PATH

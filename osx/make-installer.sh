@@ -68,27 +68,28 @@ if [ -z "$GITHUB_REPOSITORY" ]; then
     echo "Checking if $i needs an install..."
     brew list --formulae | grep -q "$i" || brew install "$i"
   done
+
+  alias luarocks-5.1="luarocks --lua-dir='$(brew --prefix lua@5.1)'"
+  luarocks-5.1 --local install LuaFileSystem
+  luarocks-5.1 --local install lrexlib-pcre
+  luarocks-5.1 --local install LuaSQL-SQLite3 SQLITE_DIR=/usr/local/opt/sqlite
+  # Although it is called luautf8 here it builds a file called lua-utf8.so:
+  luarocks-5.1 --local install luautf8
+  luarocks-5.1 --local install lua-yajl
+  # This is the Brimworks one (same as lua-yajl) note the hyphen, the one without
+  # is the Kelper project one which has the, recently (2020), troublesome
+  # dependency on zziplib (libzzip), however to avoid clashes in the field
+  # it installs itself in brimworks subdirectory which must be accomodated
+  # in where we put it and how we "require" it:
+  luarocks-5.1 --local install lua-zip
 fi
 
 # create an alias to avoid the need to list the lua dir all the time
 # we want to expand the subshell only once (it's only temporary anyways)
 # shellcheck disable=2139
-alias luarocks-5.1="luarocks --lua-dir='$(brew --prefix lua@5.1)'"
 if [ ! -f "macdeployqtfix.py" ]; then
   wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
 fi
-luarocks-5.1 --local install LuaFileSystem
-luarocks-5.1 --local install lrexlib-pcre
-luarocks-5.1 --local install LuaSQL-SQLite3 SQLITE_DIR=/usr/local/opt/sqlite
-# Although it is called luautf8 here it builds a file called lua-utf8.so:
-luarocks-5.1 --local install luautf8
-luarocks-5.1 --local install lua-yajl
-# This is the Brimworks one (same as lua-yajl) note the hyphen, the one without
-# is the Kelper project one which has the, recently (2020), troublesome
-# dependency on zziplib (libzzip), however to avoid clashes in the field
-# it installs itself in brimworks subdirectory which must be accomodated
-# in where we put it and how we "require" it:
-luarocks-5.1 --local install lua-zip
 
 
 # Ensure Homebrew's npm is used, instead of an outdated one

@@ -2,6 +2,7 @@
 
 # abort script if any command fails
 set -e
+set -x
 shopt -s expand_aliases
 
 # extract program name for message
@@ -9,6 +10,14 @@ pgm=$(basename "$0")
 
 release=""
 ptb=""
+
+BUILD_DIR="source/build"
+SOURCE_DIR="source"
+
+if [ -n "$GITHUB_REPOSITORY" ] ; then
+  BUILD_DIR=$BUILD_FOLDER
+  SOURCE_DIR=$GITHUB_WORKSPACE
+fi
 
 # find out if we do a release or ptb build
 while getopts ":pr:" option; do
@@ -27,7 +36,7 @@ done
 # set path to find macdeployqt
 PATH=/usr/local/opt/qt/bin:$PATH
 
-cd source/build
+cd "${BUILD_DIR}"
 
 # get the app to package
 app=$(basename "${1}")

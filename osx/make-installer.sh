@@ -92,6 +92,7 @@ if [ ! -f "macdeployqtfix.py" ]; then
 fi
 
 find $HOME -name "libzip*"
+find /usr -name "libzip*"
 
 # Ensure Homebrew's npm is used, instead of an outdated one
 PATH=/usr/local/bin:$PATH

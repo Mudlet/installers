@@ -200,7 +200,9 @@ rm -f ~/Desktop/[mM]udlet*.dmg
 pwd
 find . -name "mudlet-appdmg.json"
 # Modify appdmg config file according to the app file to package
+# /Users/runner/work/Mudlet/b/ninja/Mudlet-4.10.1-testing-pr4481-41c58aec.app
 perl -pi -e "s|build/.*Mudlet.*\\.app|build/${app}|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
+# Update icons to the correct type
 if [ -z "${ptb}" ]; then
   perl -pi -e "s|icons/.*\\.icns|icons/mudlet_ptb.icns|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
 else
@@ -210,6 +212,8 @@ else
     perl -pi -e "s|icons/.*\\.icns|icons/mudlet.icns|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
   fi
 fi
+
+cat "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
 
 # Last: build *.dmg file
 appdmg "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json" "${HOME}/Desktop/$(basename "${app%.*}").dmg"

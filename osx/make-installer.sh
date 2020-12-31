@@ -198,6 +198,7 @@ cd ../../
 rm -f ~/Desktop/[mM]udlet*.dmg
 
 pwd
+find . -name "mudlet-appdmg.json"
 # Modify appdmg config file according to the app file to package
 perl -pi -e "s|build/.*Mudlet.*\\.app|build/${app}|i" appdmg/mudlet-appdmg.json
 if [ -z "${ptb}" ]; then

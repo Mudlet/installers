@@ -165,6 +165,9 @@ cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
 mkdir "${app}/Contents/MacOS/brimworks"
 cp "${HOME}/.luarocks/lib/lua/5.1/brimworks/zip.so" "${app}/Contents/MacOS/brimworks"
 # Special case - libzip.5.dylib in Github Actions is located in this path
+if [ -n "$GITHUB_REPOSITORY" ] ; then
+  cp "/usr/local/lib/libzip.5.dylib" "/usr/local/lib/libzip.5.dylib.framework/libzip.5.dylib"
+fi
 python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local"
 
 cp "../3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"

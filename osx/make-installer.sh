@@ -139,15 +139,15 @@ if [ -n "$GITHUB_REPOSITORY" ] ; then
 fi
 python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local"
 
-cp "../3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
+cp "${SOURCE_DIR}/3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 
-if [ -d "../3rdparty/lua_code_formatter" ]; then
+if [ -d "${SOURCE_DIR}/3rdparty/lua_code_formatter" ]; then
   # we renamed lcf at some point
   LCF_NAME="lua_code_formatter"
 else
   LCF_NAME="lcf"
 fi
-cp -r "../3rdparty/${LCF_NAME}" "${app}/Contents/MacOS"
+cp -r "${SOURCE_DIR}/3rdparty/${LCF_NAME}" "${app}/Contents/MacOS"
 if [ "${LCF_NAME}" != "lcf" ]; then
   mv "${app}/Contents/MacOS/${LCF_NAME}" "${app}/Contents/MacOS/lcf"
 fi

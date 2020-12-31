@@ -14,6 +14,10 @@ ptb=""
 BUILD_DIR="source/build"
 SOURCE_DIR="source"
 
+# shellcheck disable=SC2154
+# If run via Github Actions, use Qt5_DIR for the custom Qt location - otherwise assume system default
+[ -n "$Qt5_DIR" ] && QT_DIR="${Qt5_DIR}" || QT_DIR="/usr/local/opt/qt/bin"
+
 if [ -n "$GITHUB_REPOSITORY" ] ; then
   BUILD_DIR=$BUILD_FOLDER
   SOURCE_DIR=$GITHUB_WORKSPACE
@@ -137,19 +141,19 @@ fi
 macdeployqt "${app}"
 
 # fix unfinished deployment of macdeployqt
-python macdeployqtfix.py "${app}/Contents/MacOS/Mudlet" "/usr/local/opt/qt/bin"
+python macdeployqtfix.py "${app}/Contents/MacOS/Mudlet" "${QT_DIR}"
 
 # Bundle in dynamically loaded libraries
 cp "${HOME}/.luarocks/lib/lua/5.1/lfs.so" "${app}/Contents/MacOS"
 
 cp "${HOME}/.luarocks/lib/lua/5.1/rex_pcre.so" "${app}/Contents/MacOS"
 # rex_pcre has to be adjusted to load libpcre from the same location
-python macdeployqtfix.py "${app}/Contents/MacOS/rex_pcre.so" "/usr/local/opt/qt/bin"
+python macdeployqtfix.py "${app}/Contents/MacOS/rex_pcre.so" "${QT_DIR}"
 
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
 cp /usr/local/opt/sqlite/lib/libsqlite3.0.dylib  "${app}/Contents/Frameworks/"
 # sqlite3 has to be adjusted to load libsqlite from the same location
-python macdeployqtfix.py "${app}/Contents/Frameworks/libsqlite3.0.dylib" "/usr/local/opt/qt/bin"
+python macdeployqtfix.py "${app}/Contents/Frameworks/libsqlite3.0.dylib" "${QT_DIR}"
 # need to adjust sqlite3.lua manually as it is a level lower than expected...
 install_name_tool -change "/usr/local/opt/sqlite/lib/libsqlite3.0.dylib" "@executable_path/../../Frameworks/libsqlite3.0.dylib" "${app}/Contents/MacOS/luasql/sqlite3.so"
 
@@ -160,7 +164,7 @@ cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
 # the executable:
 mkdir "${app}/Contents/MacOS/brimworks"
 cp "${HOME}/.luarocks/lib/lua/5.1/brimworks/zip.so" "${app}/Contents/MacOS/brimworks"
-python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local/opt/qt/bin"
+python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "${QT_DIR}"
 
 cp "../3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 
@@ -177,7 +181,7 @@ fi
 
 cp "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
 # yajl has to be adjusted to load libyajl from the same location
-python macdeployqtfix.py "${app}/Contents/MacOS/yajl.so" "/usr/local/opt/qt/bin"
+python macdeployqtfix.py "${app}/Contents/MacOS/yajl.so" "${QT_DIR}"
 
 # Edit some nice plist entries, don't fail if entries already exist
 if [ -z "${ptb}" ]; then

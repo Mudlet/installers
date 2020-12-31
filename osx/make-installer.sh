@@ -201,7 +201,7 @@ pwd
 find . -name "mudlet-appdmg.json"
 # Modify appdmg config file according to the app file to package
 # /Users/runner/work/Mudlet/b/ninja/Mudlet-4.10.1-testing-pr4481-41c58aec.app
-perl -pi -e "s|build/.*Mudlet.*\\.app|${BUILD_DIR}/${app}|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
+perl -pi -e "s|../source/build/.*Mudlet.*\\.app|${BUILD_DIR}/${app}|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
 # Update icons to the correct type
 if [ -z "${ptb}" ]; then
   perl -pi -e "s|icons/.*\\.icns|icons/mudlet_ptb.icns|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"

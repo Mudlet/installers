@@ -204,12 +204,12 @@ find . -name "mudlet-appdmg.json"
 perl -pi -e "s|../source/build/.*Mudlet.*\\.app|${BUILD_DIR}/${app}|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
 # Update icons to the correct type
 if [ -z "${ptb}" ]; then
-  perl -pi -e "s|icons/.*\\.icns|icons/mudlet_ptb.icns|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
+  perl -pi -e "s|../source/src/icons/.*\\.icns|${SOURCE_DIR}/src/icons/mudlet_ptb.icns|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
 else
   if [ -z "${release}" ]; then
-    perl -pi -e "s|icons/.*\\.icns|icons/mudlet_dev.icns|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
+    perl -pi -e "s|../source/src/icons/.*\\.icns|${SOURCE_DIR}/src/icons/mudlet_dev.icns|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
   else
-    perl -pi -e "s|icons/.*\\.icns|icons/mudlet.icns|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
+    perl -pi -e "s|../source/src/icons/.*\\.icns|${SOURCE_DIR}/src/icons/mudlet.icns|i" "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json"
   fi
 fi
 

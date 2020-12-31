@@ -95,38 +95,6 @@ if [ ! -f "macdeployqtfix.py" ]; then
   wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
 fi
 
-# + find /Users/runner -name 'libzip*'
-# /Users/runner/Library/Logs/Homebrew/libzip
-# /Users/runner/Library/Caches/Homebrew/libzip--1.7.3.catalina.bottle.tar.gz
-# /Users/runner/work/Mudlet/Mudlet/3rdparty/vcpkg/ports/libzippp
-# + find /usr -name 'libzip*'
-# /Users/runner/work/Mudlet/Mudlet/3rdparty/vcpkg/ports/libzip
-# /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/libzip.rb
-# /usr/local/var/homebrew/locks/libzip.formula.lock
-# /usr/local/var/homebrew/linked/libzip
-# /usr/local/lib/libzip.dylib
-# /usr/local/lib/pkgconfig/libzip.pc
-# /usr/local/lib/libzip.5.dylib
-# /usr/local/lib/cmake/libzip
-# /usr/local/lib/libzip.5.3.dylib
-# /usr/local/opt/libzip
-# /usr/local/Cellar/openjdk/15.0.1/libexec/openjdk.jdk/Contents/Home/lib/libzip.dylib
-# /usr/local/Cellar/libzip
-# /usr/local/Cellar/libzip/1.7.3/.brew/libzip.rb
-# /usr/local/Cellar/libzip/1.7.3/lib/libzip.dylib
-# /usr/local/Cellar/libzip/1.7.3/lib/pkgconfig/libzip.pc
-# /usr/local/Cellar/libzip/1.7.3/lib/libzip.5.dylib
-# /usr/local/Cellar/libzip/1.7.3/lib/cmake/libzip
-# /usr/local/Cellar/libzip/1.7.3/lib/cmake/libzip/libzip-config-version.cmake
-# /usr/local/Cellar/libzip/1.7.3/lib/cmake/libzip/libzip-targets-release.cmake
-# /usr/local/Cellar/libzip/1.7.3/lib/cmake/libzip/libzip-config.cmake
-# /usr/local/Cellar/libzip/1.7.3/lib/cmake/libzip/libzip-targets.cmake
-# /usr/local/Cellar/libzip/1.7.3/lib/libzip.5.3.dylib
-# /usr/local/Cellar/libzip/1.7.3/share/man/man3/libzip.3
-# /usr/local/share/man/man3/libzip.3
-# /usr/local/share/vcpkg/ports/libzippp
-# /usr/local/share/vcpkg/ports/libzip
-
 # Ensure Homebrew's npm is used, instead of an outdated one
 PATH=/usr/local/bin:$PATH
 # Add node path, as node seems to error when it's missing
@@ -165,17 +133,21 @@ cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
 mkdir "${app}/Contents/MacOS/brimworks"
 cp "${HOME}/.luarocks/lib/lua/5.1/brimworks/zip.so" "${app}/Contents/MacOS/brimworks"
 # Special case - libzip.5.dylib in Github Actions is located in this path
+if [ -n "$GITHUB_REPOSITORY" ] ; then
+  mkdir -p "/usr/local/lib/libzip.5.dylib.framework"
+  cp "/usr/local/lib/libzip.5.dylib" "/usr/local/lib/libzip.5.dylib.framework/libzip.5.dylib"
+fi
 python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local"
 
-cp "../3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
+cp "${SOURCE_DIR}/3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 
-if [ -d "../3rdparty/lua_code_formatter" ]; then
+if [ -d "${SOURCE_DIR}/3rdparty/lua_code_formatter" ]; then
   # we renamed lcf at some point
   LCF_NAME="lua_code_formatter"
 else
   LCF_NAME="lcf"
 fi
-cp -r "../3rdparty/${LCF_NAME}" "${app}/Contents/MacOS"
+cp -r "${SOURCE_DIR}/3rdparty/${LCF_NAME}" "${app}/Contents/MacOS"
 if [ "${LCF_NAME}" != "lcf" ]; then
   mv "${app}/Contents/MacOS/${LCF_NAME}" "${app}/Contents/MacOS/lcf"
 fi
@@ -226,6 +198,7 @@ cd ../../
 rm -f ~/Desktop/[mM]udlet*.dmg
 
 pwd
+find . -name "mudlet-appdmg.json"
 # Modify appdmg config file according to the app file to package
 perl -pi -e "s|build/.*Mudlet.*\\.app|build/${app}|i" "$BUILD_DIR/installers/appdmg/mudlet-appdmg.json"
 if [ -z "${ptb}" ]; then

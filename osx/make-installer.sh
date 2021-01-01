@@ -107,6 +107,10 @@ if [ ! -d "${app}/Contents/Frameworks/Sparkle.framework" ]; then
   cp -r "${SOURCE_DIR}/3rdparty/cocoapods/Pods/Sparkle/Sparkle.framework" "${app}/Contents/Frameworks"
   ls "${app}/Contents/Frameworks"
 fi
+
+# Debug - see what resources we have
+brew install tree && tree "${app}/Contents/Resources"
+
 # Bundle in Qt libraries
 macdeployqt "${app}"
 

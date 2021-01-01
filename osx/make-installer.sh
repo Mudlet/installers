@@ -103,7 +103,8 @@ npm install -g appdmg
 
 # copy in 3rd party framework first so there is the chance of things getting fixed if it doesn't exist
 if [ ! -d "${app}/Contents/Frameworks/Sparkle.framework" ]; then
-  cp -r "${SOURCE_DIR}/3rdparty/cocoapods/Pods/Sparkle/Sparkle.framework" "${app}/Contents/Frameworks"
+  mkdir "${app}/Contents/Frameworks/Sparkle.framework"
+  cp -r "${SOURCE_DIR}/3rdparty/cocoapods/Pods/Sparkle/Sparkle.framework" "${app}/Contents/Frameworks/Sparkle.framework"
   ls "${app}/Contents/Frameworks"
 fi
 # Bundle in Qt libraries

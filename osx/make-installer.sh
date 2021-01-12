@@ -108,9 +108,6 @@ if [ ! -d "${app}/Contents/Frameworks/Sparkle.framework" ]; then
   ls "${app}/Contents/Frameworks"
 fi
 
-# Debug - see what resources we have
-brew install tree && tree "${app}/Contents/Resources"
-
 # Bundle in Qt libraries
 macdeployqt "${app}"
 

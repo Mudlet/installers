@@ -159,6 +159,7 @@ cp "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
 # yajl has to be adjusted to load libyajl from the same location
 python macdeployqtfix.py "${app}/Contents/MacOS/yajl.so" "${QT_DIR}"
 if [ -n "$GITHUB_REPOSITORY" ] ; then
+  cp "/Users/runner/work/Mudlet/Mudlet/3rdparty/vcpkg/packages/yajl_x64-osx/lib/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
   install_name_tool -change "/Users/runner/work/Mudlet/Mudlet/3rdparty/vcpkg/packages/yajl_x64-osx/lib/libyajl.2.dylib" "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/MacOS/yajl.so"
 fi
 

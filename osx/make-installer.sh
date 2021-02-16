@@ -104,13 +104,16 @@ npm install -g appdmg
 if [ ! -d "${app}/Contents/Frameworks/Sparkle.framework" ]; then
   mkdir -p "${app}/Contents/Frameworks/Sparkle.framework"
   cp -r "${SOURCE_DIR}/3rdparty/cocoapods/Pods/Sparkle/Sparkle.framework" "${app}/Contents/Frameworks"
-  ls "${app}/Contents/Frameworks"
+  brew install tree
+  tree "${app}/Contents/Frameworks"
 fi
 
 # Bundle in Qt libraries
+echo "Running macdeployqt..."
 macdeployqt "${app}"
 
 # fix unfinished deployment of macdeployqt
+echo "Running macdeployqtfix..."
 python macdeployqtfix.py "${app}/Contents/MacOS/Mudlet" "${QT_DIR}"
 
 # Bundle in dynamically loaded libraries

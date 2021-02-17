@@ -196,12 +196,12 @@ fi
 
 # Remove fr_CA and pt translactions because those are giving issues:
 # https://github.com/Mudlet/Mudlet/pull/4746#issuecomment-779626741
-echo "Purging problematic fr_CA and pt translations from Sparkle..."
-rm -rf ${app}/Contents/Frameworks/Sparkle.framework/Versions/Current/Resources/fr_CA.lproj
-rm -rf ${app}/Contents/Frameworks/Sparkle.framework/Versions/Current/Resources/pt.lproj
-pushd "${app}/Contents/Frameworks"
-find .
-popd
+# echo "Purging problematic fr_CA and pt translations from Sparkle..."
+# rm -rf ${app}/Contents/Frameworks/Sparkle.framework/Versions/Current/Resources/fr_CA.lproj
+# rm -rf ${app}/Contents/Frameworks/Sparkle.framework/Versions/Current/Resources/pt.lproj
+# pushd "${app}/Contents/Frameworks"
+# find .
+# popd
 
 # Sign everything now that we're done modifying contents of the .app file
 # Keychain is already setup in travis.osx.after_success.sh for us

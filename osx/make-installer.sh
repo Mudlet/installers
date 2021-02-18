@@ -197,8 +197,13 @@ fi
 # Remove fr_CA and pt translactions because those are giving issues:
 # https://github.com/sparkle-project/Sparkle/issues/1764
 echo "Purging problematic fr_CA and pt translations from Sparkle..."
-rm -rf ${app}/Contents/Frameworks/Sparkle.framework/Versions/Current/Resources/fr_CA.lproj
-rm -rf ${app}/Contents/Frameworks/Sparkle.framework/Versions/Current/Resources/pt.lproj
+BAD_SYMLINKS="fr_CA pt"
+for i in $BAD_SYMLINKS; do
+  rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Versions/Current/Resources/$i.lproj"
+  rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Resources/$i.lproj"
+  rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/$i.lproj"
+done
+
 pushd "${app}/Contents/Frameworks/Sparkle.framework"
 find .
 popd

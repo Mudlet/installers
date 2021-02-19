@@ -194,20 +194,6 @@ fi
 /usr/libexec/PlistBuddy -c "Add SUAllowsAutomaticUpdates bool true" "${app}/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Add SUAutomaticallyUpdate bool true" "${app}/Contents/Info.plist" || true
 
-# Remove fr_CA and pt translations because macOS broke those:
-# https://github.com/sparkle-project/Sparkle/issues/1764
-# echo "Purging problematic fr_CA and pt translations from Sparkle..."
-# BAD_SYMLINKS="fr_CA pt"
-# for i in $BAD_SYMLINKS; do
-#   rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Versions/Current/Resources/$i.lproj"
-#   rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Resources/$i.lproj"
-#   rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/$i.lproj"
-# done
-
-# pushd "${app}/Contents/Frameworks/Sparkle.framework"
-# find .
-# popd
-
 # Sign everything now that we're done modifying contents of the .app file
 # Keychain is already setup in travis.osx.after_success.sh for us
 if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then

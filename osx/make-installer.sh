@@ -196,24 +196,24 @@ fi
 
 # Remove fr_CA and pt translations because macOS broke those:
 # https://github.com/sparkle-project/Sparkle/issues/1764
-echo "Purging problematic fr_CA and pt translations from Sparkle..."
-BAD_SYMLINKS="fr_CA pt"
-for i in $BAD_SYMLINKS; do
-  rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Versions/Current/Resources/$i.lproj"
-  rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Resources/$i.lproj"
-  rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/$i.lproj"
-done
+# echo "Purging problematic fr_CA and pt translations from Sparkle..."
+# BAD_SYMLINKS="fr_CA pt"
+# for i in $BAD_SYMLINKS; do
+#   rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Versions/Current/Resources/$i.lproj"
+#   rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Resources/$i.lproj"
+#   rm -rf "${app}/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/$i.lproj"
+# done
 
-pushd "${app}/Contents/Frameworks/Sparkle.framework"
-find .
-popd
+# pushd "${app}/Contents/Frameworks/Sparkle.framework"
+# find .
+# popd
 
 # Sign everything now that we're done modifying contents of the .app file
 # Keychain is already setup in travis.osx.after_success.sh for us
 if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
-  codesign --deep -s "$IDENTITY" "${app}"
-  # echo "Validating codesigning worked with codesign -vv --deep-verify:"
-  # codesign -vv --deep-verify "${app}"
+  codesign --deep --sign --force "$IDENTITY" "${app}"
+  echo "Validating codesigning worked with codesign -vv --deep-verify:"
+  codesign -vv --deep-verify "${app}"
 fi
 
 # Generate final .dmg

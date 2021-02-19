@@ -194,7 +194,7 @@ fi
 /usr/libexec/PlistBuddy -c "Add SUAllowsAutomaticUpdates bool true" "${app}/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Add SUAutomaticallyUpdate bool true" "${app}/Contents/Info.plist" || true
 
-# Remove fr_CA and pt translactions because those are giving issues:
+# Remove fr_CA and pt translations because macOS broke those:
 # https://github.com/sparkle-project/Sparkle/issues/1764
 echo "Purging problematic fr_CA and pt translations from Sparkle..."
 BAD_SYMLINKS="fr_CA pt"
@@ -212,8 +212,8 @@ popd
 # Keychain is already setup in travis.osx.after_success.sh for us
 if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
   codesign --deep -s "$IDENTITY" "${app}"
-  echo "Validating codesigning worked with codesign -vv --deep-verify:"
-  codesign -vv --deep-verify "${app}"
+  # echo "Validating codesigning worked with codesign -vv --deep-verify:"
+  # codesign -vv --deep-verify "${app}"
 fi
 
 # Generate final .dmg

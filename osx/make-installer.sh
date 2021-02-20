@@ -197,7 +197,7 @@ fi
 # Sign everything now that we're done modifying contents of the .app file
 # Keychain is already setup in travis.osx.after_success.sh for us
 if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
-  codesign --deep --sign --force "$IDENTITY" "${app}"
+  codesign --deep --force --sign "$IDENTITY" "${app}"
   echo "Validating codesigning worked with codesign -vv --deep-verify:"
   codesign -vv --deep-verify "${app}"
 fi

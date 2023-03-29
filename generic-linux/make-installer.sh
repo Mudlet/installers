@@ -116,8 +116,12 @@ if [ -z "$(ls build/lib/libssl.so*)" ]; then
   exit 1
 fi
 
+#NOTE: the -unsupported-allow-new-glibc should be removed again around May 31 2023
+# It is here temporarily to allow Github Actions to make test builds during a gap between
+# between when Github Actions drops support for 18.04 prior to when Ubuntu itself does
 echo "Generating AppImage"
 ./squashfs-root/AppRun ./build/mudlet -appimage \
+  -unsupported-allow-new-glibc \
   -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so \
   -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so \
   -executable=build/lib/libssl.so.1.1 \

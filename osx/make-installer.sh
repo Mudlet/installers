@@ -101,6 +101,9 @@ fi
 PATH=/usr/local/bin:$PATH
 # Add node path, as node seems to error when it's missing
 mkdir -p "$HOME"/.npm-global/lib
+
+# workaround for npm incompatibility with python 3.12, see https://github.com/nodejs/node-gyp/issues/2869#issuecomment-1769572922
+python3 -m pip install packaging
 npm install -g appdmg
 
 # copy in 3rd party framework first so there is the chance of things getting fixed if it doesn't exist

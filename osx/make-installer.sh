@@ -97,10 +97,6 @@ if [ ! -f "macdeployqtfix.py" ]; then
   wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
 fi
 
-# Ensure Homebrew's npm is used, instead of an outdated one
-# PATH=/usr/local/bin:$PATH
-# Add node path, as node seems to error when it's missing
-# mkdir -p "$HOME"/.npm-global/lib
 npm install -g appdmg
 
 # copy in 3rd party framework first so there is the chance of things getting fixed if it doesn't exist

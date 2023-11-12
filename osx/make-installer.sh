@@ -91,7 +91,12 @@ fi
 # we want to expand the subshell only once (it's only temporary anyways)
 # shellcheck disable=2139
 if [ ! -f "macdeployqtfix.py" ]; then
-  wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
+  # The original version is missing a change that is needed to work with 3.x Pythons
+  # wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
+  # This fork has a single commit/change:
+  # https://github.com/tamlok/macdeployqtfix/commit/390666219c004cfcee3bb7ddf00ca8980701b992
+  # that looks to fix the problem
+  wget https://raw.githubusercontent.com/tamlok/macdeployqtfix/master/macdeployqtfix.py
 fi
 
 # Ensure Homebrew's npm is used, instead of an outdated one

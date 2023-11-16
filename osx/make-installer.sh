@@ -143,6 +143,11 @@ if [ -n "$GITHUB_REPOSITORY" ] ; then
 fi
 python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local"
 
+# Also fix up latest libzip which has a dependency on libzstd - copy them both
+# into "${app}/Contents/Frameworks":
+cp "/usr/local/lib/libzip.5.dylib" "${app}/Contents/Frameworks"
+cp "/usr/local/lib/libzstd.1.dylib" "${app}/Contents/Frameworks"
+
 cp "${SOURCE_DIR}/3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 
 if [ -d "${SOURCE_DIR}/3rdparty/lua_code_formatter" ]; then

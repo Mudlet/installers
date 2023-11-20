@@ -151,8 +151,8 @@ cp "/usr/local/Cellar/libzip/1.10.1/lib/libzip.5.5.dylib" "${app}/Contents/Frame
 # symbolic links to the actual library files that are in the homebrew
 # /usr/local/Celler/ and that does not help end-users on a different machine
 # that doesn't have them:
-install_name_tool -change @loader_path/../../../../opt/xz/lib/liblzma.5.dylib @executable_path/../Frameworks/liblzma.5.dylib ./libzip.5.dylib
-install_name_tool -change @loader_path/../../../../opt/zstd/lib/libzstd.1.dylib  @executable_path/../Frameworks/libzstd.1.dylib ./libzip.5.dylib
+install_name_tool -change @loader_path/../../../../opt/xz/lib/liblzma.5.dylib @executable_path/../Frameworks/liblzma.5.dylib ${app}/Contents/Frameworks/libzip.5.dylib
+install_name_tool -change @loader_path/../../../../opt/zstd/lib/libzstd.1.dylib  @executable_path/../Frameworks/libzstd.1.dylib ${app}/Contents/Frameworks/libzip.5.dylib
 
 cp "/usr/local/Cellar/xz/5.4.4/lib/liblzma.5.dylib" "${app}/Contents/Frameworks"
 

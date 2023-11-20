@@ -145,11 +145,12 @@ python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local"
 
 # Also fix up latest libzip which has a dependency on libzstd (and liblzma) and
 # copy them into "${app}/Contents/Frameworks":
-cp "/usr/local/Cellar/libzip/1.10.1/lib/libzip.5.dylib" "${app}/Contents/Frameworks"
-# Fix up the loader to get the next two libraries from within our bundle,
-# the ../../../../opt/ directorys are ones containing links to the actual
-# library files that are in the homebrew /usr/local/Celler/ and that does not
-# help us on a different machine that doesn't have them:
+cp "/usr/local/Cellar/libzip/1.10.1/lib/libzip.5.5.dylib" "${app}/Contents/Frameworks/libzip.5.dylib"
+# Fix up the loader to get the next two libraries as dependencies of the above
+# from within our bundle, the ../../../../opt/ directorys are ones containing
+# symbolic links to the actual library files that are in the homebrew
+# /usr/local/Celler/ and that does not help end-users on a different machine
+# that doesn't have them:
 install_name_tool -change @loader_path/../../../../opt/xz/lib/liblzma.5.dylib @executable_path/../Frameworks/liblzma.5.dylib ./libzip.5.dylib
 install_name_tool -change @loader_path/../../../../opt/zstd/lib/libzstd.1.dylib  @executable_path/../Frameworks/libzstd.1.dylib ./libzip.5.dylib
 

@@ -148,7 +148,7 @@ python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local"
 # "${app}/Contents/Frameworks" - which is a sort of standard placement in App
 # bundles:
 cp "/usr/local/Cellar/libzip/1.10.1/lib/libzip.5.5.dylib" "${app}/Contents/Frameworks/libzip.5.dylib"
-cp "/usr/local/Cellar/xz/5.4.4/lib/liblzma.5.dylib" "${app}/Contents/Frameworks"
+cp "/usr/local/Cellar/xz/5.4.5/lib/liblzma.5.dylib" "${app}/Contents/Frameworks"
 # Rename this one to match the name that libzip is looking for:
 cp "/usr/local/Cellar/zstd/1.5.5/lib/libzstd.1.5.5.dylib" "${app}/Contents/Frameworks/libzstd.1.dylib"
 

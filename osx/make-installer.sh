@@ -151,9 +151,9 @@ python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local"
 # symbolic link but when they are copied the linked to file will be what is
 # copied:
 # Copy the right file explicity so we can examine why the wildcard one doesn't work
-cp "/usr/local/Cellar/libzip/1.10.1/lib/libzip.5.5.dylib" "${app}/Contents/Frameworks/libzip.5.dylib"
 ls -l /usr/local/Cellar/libzip/1.*/lib/libzip.5.*.dylib
-cp "/usr/local/Cellar/libzip/1.*/lib/libzip.5.*.dylib" "${app}/Contents/Frameworks/libzip.5.dylib"
+cp "/usr/local/Cellar/libzip/1.10.1/lib/libzip.5.5.dylib" "${app}/Contents/Frameworks/libzip.5.dylib"
+# cp "/usr/local/Cellar/libzip/1.*/lib/libzip.5.*.dylib" "${app}/Contents/Frameworks/libzip.5.dylib"
 ls -l /usr/local/Cellar/xz/5.*/lib/liblzma.5.dylib
 cp "/usr/local/Cellar/xz/5.*/lib/liblzma.5.dylib" "${app}/Contents/Frameworks/liblzma.5.dylib"
 ls -l /usr/local/Cellar/zstd/1.*/lib/libzstd.1.dylib

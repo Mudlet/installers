@@ -152,7 +152,7 @@ python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local"
 # copied:
 cp -v /usr/local/Cellar/libzip/1.1?.?/lib/libzip.5.?.dylib "${app}/Contents/Frameworks/libzip.5.dylib"
 cp -v /usr/local/Cellar/xz/5.?.?/lib/liblzma.5.dylib "${app}/Contents/Frameworks/liblzma.5.dylib"
-cp -v /usr/local/Cellar/zstd/1.?.?/lib/libzstd.1.dylib" "${app}/Contents/Frameworks/libzstd.1.dylib"
+cp -v /usr/local/Cellar/zstd/1.?.?/lib/libzstd.1.dylib "${app}/Contents/Frameworks/libzstd.1.dylib"
 
 # Fix up the loader to get the other two (depencdency) libraries from within our
 # bundle, the ../../../../opt/ directorys are ones containing symbolic links to

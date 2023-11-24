@@ -146,11 +146,13 @@ python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local"
 # Also fix up a separate (does it have to be?) copy of libzip which has a
 # dependency on libzstd (and liblzma) and copy them into
 # "${app}/Contents/Frameworks" - which is a sort of standard placement in App
-# bundles:
-cp "/usr/local/Cellar/libzip/1.10.1/lib/libzip.5.5.dylib" "${app}/Contents/Frameworks/libzip.5.dylib"
-cp "/usr/local/Cellar/xz/5.4.5/lib/liblzma.5.dylib" "${app}/Contents/Frameworks"
-# Rename this one to match the name that libzip is looking for:
-cp "/usr/local/Cellar/zstd/1.5.5/lib/libzstd.1.5.5.dylib" "${app}/Contents/Frameworks/libzstd.1.dylib"
+# bundles - to enable things to keep working when minor or patch version numbers
+# change it is necessary to use some wildcards, these may actually target a
+# symbolic link but when they are copied the linked to file will be what is
+# copied:
+cp "/usr/local/Cellar/libzip/1.*/lib/libzip.5.dylib" "${app}/Contents/Frameworks/libzip.5.dylib"
+cp "/usr/local/Cellar/xz/5.*/lib/liblzma.5.dylib" "${app}/Contents/Frameworks/liblzma.5.dylib"
+cp "/usr/local/Cellar/zstd/1.*/lib/libzstd.1.dylib" "${app}/Contents/Frameworks/libzstd.1.dylib"
 
 # Fix up the loader to get the other two (depencdency) libraries from within our
 # bundle, the ../../../../opt/ directorys are ones containing symbolic links to

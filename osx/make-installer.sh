@@ -150,7 +150,7 @@ python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local"
 # change it is necessary to use some wildcards, these may actually target a
 # symbolic link but when they are copied the linked to file will be what is
 # copied:
-cp "/usr/local/Cellar/libzip/1.*/lib/libzip.5.dylib" "${app}/Contents/Frameworks/libzip.5.dylib"
+cp "/usr/local/Cellar/libzip/1.*/lib/libzip.5.*.dylib" "${app}/Contents/Frameworks/libzip.5.dylib"
 cp "/usr/local/Cellar/xz/5.*/lib/liblzma.5.dylib" "${app}/Contents/Frameworks/liblzma.5.dylib"
 cp "/usr/local/Cellar/zstd/1.*/lib/libzstd.1.dylib" "${app}/Contents/Frameworks/libzstd.1.dylib"
 

@@ -156,8 +156,8 @@ cp "/usr/local/Cellar/zstd/1.5.5/lib/libzstd.1.5.5.dylib" "${app}/Contents/Frame
 # bundle, the ../../../../opt/ directorys are ones containing symbolic links to
 # the actual library files that are in the homebrew /usr/local/Celler/ and that
 # does not help end-users on a different machine that doesn't have them:
-install_name_tool -change @loader_path/../../../../opt/xz/lib/liblzma.5.dylib @executable_path/../Frameworks/liblzma.5.dylib ${app}/Contents/Frameworks/libzip.5.dylib
-install_name_tool -change @loader_path/../../../../opt/zstd/lib/libzstd.1.dylib  @executable_path/../Frameworks/libzstd.1.dylib ${app}/Contents/Frameworks/libzip.5.dylib
+install_name_tool -change @loader_path/../../../../opt/xz/lib/liblzma.5.dylib @executable_path/../Frameworks/liblzma.5.dylib "${app}/Contents/Frameworks/libzip.5.dylib"
+install_name_tool -change @loader_path/../../../../opt/zstd/lib/libzstd.1.dylib  @executable_path/../Frameworks/libzstd.1.dylib "${app}/Contents/Frameworks/libzip.5.dylib"
 
 cp "${SOURCE_DIR}/3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 

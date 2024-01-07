@@ -218,6 +218,21 @@ fi
 /usr/libexec/PlistBuddy -c "Add NSHighResolutionCapable string true" "${app}/Contents/Info.plist" || true
 
 
+# Associate Mudlet with .mpackage files
+/usr/libexec/PlistBuddy -c "Add CFBundleDocumentTypes array" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add CFBundleDocumentTypes:0 dict" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add CFBundleDocumentTypes:0:CFBundleTypeName string Mudlet Package" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add CFBundleDocumentTypes:0:CFBundleTypeRole string Editor" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add CFBundleDocumentTypes:0:LSItemContentTypes array" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add CFBundleDocumentTypes:0:LSItemContentTypes:0 string com.mudlet.mpackage" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations array" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0 dict" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0:UTTypeIdentifier string com.mudlet.mpackage" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0:UTTypeDescription string Mudlet Package" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0:UTTypeConformsTo array" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0:UTTypeConformsTo:0 string public.data" "${app}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0:UTTypeConformsTo:1 string public.zip" "${app}/Contents/Info.plist"
+
 # Sign everything now that we're done modifying contents of the .app file
 # Keychain is already setup in travis.osx.after_success.sh for us
 if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then

@@ -131,12 +131,10 @@ install_name_tool -change "${HOMEBREW_PREFIX}/opt/sqlite/lib/libsqlite3.0.dylib"
 
 cp -v "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
 
-# The lua-zip rock:
-# Also need to adjust the zip.so manually so that it can be at a level down from
-# the executable:
+# The lua-zip rock
 mkdir "${app}/Contents/MacOS/brimworks"
 cp -v "${HOME}/.luarocks/lib/lua/5.1/brimworks/zip.so" "${app}/Contents/MacOS/brimworks" 
-install_name_tool -change "${HOMEBREW_PREFIX}/opt/libzip/lib/libzip.5.dylib" "@executable_path/../../Frameworks/libzip.5.dylib" "${app}/Contents/MacOS/brimworks/zip.so"
+install_name_tool -change "${HOMEBREW_PREFIX}/opt/libzip/lib/libzip.5.dylib" "@executable_path/../Frameworks/libzip.5.dylib" "${app}/Contents/MacOS/brimworks/zip.so"
 
 cp -r "${SOURCE_DIR}/3rdparty/lcf" "${app}/Contents/MacOS"
 

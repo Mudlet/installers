@@ -16,14 +16,13 @@ SOURCE_DIR="source"
 # Set HOMEBREW_PREFIX, HOMEBREW_CELLAR, add correct paths to PATH
  eval "$(brew shellenv)"
 
-
-# If run via Github Actions, use Qt5_DIR for the custom Qt location - otherwise use QT_DIR
-if [ -n "$Qt5_DIR" ]; then
-    QT_DIR="$Qt5_DIR"
+# QT_ROOT_DIR set by install-qt action.
+if [ -n "$QT_ROOT_DIR" ]; then
+    QT_DIR="$QT_ROOT_DIR"
 else
     # Check if QT_DIR is already set
     if [ -z "$QT_DIR" ]; then
-        echo "Error: Qt5_DIR is not set, and QT_DIR is also not set."
+        echo "QT_DIR not set."
         exit 1
     fi
 fi

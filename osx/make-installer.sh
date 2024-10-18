@@ -88,14 +88,7 @@ if [ -z "$GITHUB_REPOSITORY" ]; then
 fi
 
 if [ ! -f "macdeployqtfix.py" ]; then
-  # The original version is missing a change that is needed to work with 3.x Pythons
-  # wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
-  # This fork has a single commit/change:
-  # https://github.com/tamlok/macdeployqtfix/commit/390666219c004cfcee3bb7ddf00ca8980701b992
-  # that looks to fix the problem
-  # and now forked and added changes to support homebrew in /opt/homebrew
-  # https://github.com/rparet/macdeployqtfix/commit/3907f462db3a7cee6e42ea0559b455ecbf09a44d
-  wget https://raw.githubusercontent.com/rparet/macdeployqtfix/master/macdeployqtfix.py
+  wget https://raw.githubusercontent.com/arl/macdeployqtfix/master/macdeployqtfix.py
 fi
 
 npm install -g appdmg

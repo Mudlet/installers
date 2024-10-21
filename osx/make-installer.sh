@@ -13,9 +13,19 @@ ptb=""
 BUILD_DIR="source/build"
 SOURCE_DIR="source"
 
-# shellcheck disable=SC2154
-# If run via Github Actions, use Qt5_DIR for the custom Qt location - otherwise assume system default
-[ -n "$Qt5_DIR" ] && QT_DIR="${Qt5_DIR}" || QT_DIR="/usr/local/opt/qt/bin"
+# Set HOMEBREW_PREFIX, HOMEBREW_CELLAR, add correct paths to PATH
+ eval "$(brew shellenv)"
+
+# QT_ROOT_DIR set by install-qt action.
+if [ -n "$QT_ROOT_DIR" ]; then
+    QT_DIR="$QT_ROOT_DIR"
+else
+    # Check if QT_DIR is already set
+    if [ -z "$QT_DIR" ]; then
+        echo "QT_DIR not set."
+        exit 1
+    fi
+fi
 
 if [ -n "$GITHUB_REPOSITORY" ] ; then
   BUILD_DIR=$BUILD_FOLDER
@@ -36,8 +46,12 @@ while getopts ":pr:" option; do
   fi
 done
 
-# set path to find macdeployqt
-PATH=/usr/local/opt/qt/bin:$PATH
+# Check if macdeployqt is in the path
+if ! command -v macdeployqt &> /dev/null
+then
+    echo "Error: macdeployqt could not be found in the PATH."
+    exit 1
+fi
 
 cd "${BUILD_DIR}"
 
@@ -59,23 +73,9 @@ echo "Deploying ${app}"
 
 # install installer dependencies, except on Github where they're preinstalled at this point
 if [ -z "$GITHUB_REPOSITORY" ]; then
-  echo "Running brew update-reset"
-  brew update-reset
-  echo "Finished with brew update-reset"
-  BREWS="sqlite3 lua lua@5.1 node luarocks"
-  for i in $BREWS; do
-    echo "Checking if $i needs an upgrade..."
-    brew outdated | grep -q "$i" && brew upgrade "$i"
-  done
-  for i in $BREWS; do
-    echo "Checking if $i needs an install..."
-    brew list --formulae | grep -q "$i" || brew install "$i"
-  done
-
-  alias luarocks-5.1="luarocks --lua-dir='$(brew --prefix lua@5.1)'"
   luarocks-5.1 --local install LuaFileSystem
   luarocks-5.1 --local install lrexlib-pcre
-  luarocks-5.1 --local install LuaSQL-SQLite3 SQLITE_DIR=/usr/local/opt/sqlite
+  luarocks-5.1 --local install LuaSQL-SQLite3 SQLITE_DIR=${HOMEBREW_PREFIX}/opt/sqlite
   # Although it is called luautf8 here it builds a file called lua-utf8.so:
   luarocks-5.1 --local install luautf8
   luarocks-5.1 --local install lua-yajl
@@ -87,16 +87,8 @@ if [ -z "$GITHUB_REPOSITORY" ]; then
   luarocks-5.1 --local install lua-zip
 fi
 
-# create an alias to avoid the need to list the lua dir all the time
-# we want to expand the subshell only once (it's only temporary anyways)
-# shellcheck disable=2139
 if [ ! -f "macdeployqtfix.py" ]; then
-  # The original version is missing a change that is needed to work with 3.x Pythons
-  # wget https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
-  # This fork has a single commit/change:
-  # https://github.com/tamlok/macdeployqtfix/commit/390666219c004cfcee3bb7ddf00ca8980701b992
-  # that looks to fix the problem
-  wget https://raw.githubusercontent.com/tamlok/macdeployqtfix/master/macdeployqtfix.py
+  wget https://raw.githubusercontent.com/arl/macdeployqtfix/master/macdeployqtfix.py
 fi
 
 npm install -g appdmg
@@ -108,79 +100,49 @@ if [ ! -d "${app}/Contents/Frameworks/Sparkle.framework" ]; then
 fi
 
 # Bundle in Qt libraries
-echo "Running macdeployqt..."
-macdeployqt "${app}"
+echo "Running macdeployqt"
+macdeployqt "${app}" $( [ -n "$DEBUG" ] && echo "-verbose=3" )
 
 # fix unfinished deployment of macdeployqt
-echo "Running macdeployqtfix..."
-python macdeployqtfix.py "${app}/Contents/MacOS/Mudlet" "${QT_DIR}"
+echo "Running macdeployqtfix"
+python macdeployqtfix.py "${app}/Contents/MacOS/Mudlet" "${QT_DIR}" $( [ -n "$DEBUG" ] && echo "--verbose" )
 
 # Bundle in dynamically loaded libraries
-cp "${HOME}/.luarocks/lib/lua/5.1/lfs.so" "${app}/Contents/MacOS"
-
-cp "${HOME}/.luarocks/lib/lua/5.1/rex_pcre.so" "${app}/Contents/MacOS"
+# These will be manually fixed up because macdeployqtfix is not really designed to handle individual libraries.
+echo "Bundling dynamic libraries"
+cp -v "${HOME}/.luarocks/lib/lua/5.1/lfs.so" "${app}/Contents/MacOS"
+cp -v "${HOME}/.luarocks/lib/lua/5.1/rex_pcre.so" "${app}/Contents/MacOS"
 # rex_pcre has to be adjusted to load libpcre from the same location
-python macdeployqtfix.py "${app}/Contents/MacOS/rex_pcre.so" "${QT_DIR}"
+install_name_tool -change "${HOMEBREW_PREFIX}/opt/pcre/lib/libpcre.1.dylib" "@executable_path/../Frameworks/libpcre.1.dylib" "${app}/Contents/MacOS/rex_pcre.so"
 
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
-cp /usr/local/opt/sqlite/lib/libsqlite3.0.dylib  "${app}/Contents/Frameworks/"
-# sqlite3 has to be adjusted to load libsqlite from the same location
-python macdeployqtfix.py "${app}/Contents/Frameworks/libsqlite3.0.dylib" "${QT_DIR}"
+cp -v ${HOMEBREW_PREFIX}/opt/sqlite/lib/libsqlite3.0.dylib  "${app}/Contents/Frameworks/"
+install_name_tool -id  "@executable_path/../Frameworks/libsqlite3.0.dylib" "${app}/Contents/Frameworks/libsqlite3.0.dylib" 
 # need to adjust sqlite3.lua manually as it is a level lower than expected...
-install_name_tool -change "/usr/local/opt/sqlite/lib/libsqlite3.0.dylib" "@executable_path/../../Frameworks/libsqlite3.0.dylib" "${app}/Contents/MacOS/luasql/sqlite3.so"
+install_name_tool -change "${HOMEBREW_PREFIX}/opt/sqlite/lib/libsqlite3.0.dylib" "@executable_path/../../Frameworks/libsqlite3.0.dylib" "${app}/Contents/MacOS/luasql/sqlite3.so"
 
-cp "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
+cp -v "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
 
-# The lua-zip rock:
-# Also need to adjust the zip.so manually so that it can be at a level down from
-# the executable:
+# The lua-zip rock
 mkdir "${app}/Contents/MacOS/brimworks"
-cp "${HOME}/.luarocks/lib/lua/5.1/brimworks/zip.so" "${app}/Contents/MacOS/brimworks"
-# Special case - libzip.5.dylib in Github Actions is located in this path
-if [ -n "$GITHUB_REPOSITORY" ] ; then
-  mkdir -p "/usr/local/lib/libzip.5.dylib.framework"
-  cp "/usr/local/lib/libzip.5.dylib" "/usr/local/lib/libzip.5.dylib.framework/libzip.5.dylib"
-fi
-python macdeployqtfix.py "${app}/Contents/MacOS/brimworks/zip.so" "/usr/local"
+cp -v "${HOME}/.luarocks/lib/lua/5.1/brimworks/zip.so" "${app}/Contents/MacOS/brimworks" 
+install_name_tool -change "${HOMEBREW_PREFIX}/opt/libzip/lib/libzip.5.dylib" "@executable_path/../Frameworks/libzip.5.dylib" "${app}/Contents/MacOS/brimworks/zip.so"
 
-# Also fix up a separate (does it have to be?) copy of libzip which has a
-# dependency on libzstd (and liblzma) and copy them into
-# "${app}/Contents/Frameworks" - which is a sort of standard placement in App
-# bundles - to enable things to keep working when minor or patch version numbers
-# change it is necessary to use some wildcards, these may actually target a
-# symbolic link but when they are copied the linked to file will be what is
-# copied:
-cp -v /usr/local/Cellar/libzip/1.1?.?/lib/libzip.5.?.dylib "${app}/Contents/Frameworks/libzip.5.dylib"
-cp -v /usr/local/Cellar/xz/5.?.?/lib/liblzma.5.dylib "${app}/Contents/Frameworks/liblzma.5.dylib"
-cp -v /usr/local/Cellar/zstd/1.?.?/lib/libzstd.1.dylib "${app}/Contents/Frameworks/libzstd.1.dylib"
+cp -r "${SOURCE_DIR}/3rdparty/lcf" "${app}/Contents/MacOS"
 
-# Fix up the loader to get the other two (depencdency) libraries from within our
-# bundle, the ../../../../opt/ directorys are ones containing symbolic links to
-# the actual library files that are in the homebrew /usr/local/Celler/ and that
-# does not help end-users on a different machine that doesn't have them:
-install_name_tool -change @loader_path/../../../../opt/xz/lib/liblzma.5.dylib @executable_path/../Frameworks/liblzma.5.dylib "${app}/Contents/Frameworks/libzip.5.dylib"
-install_name_tool -change @loader_path/../../../../opt/zstd/lib/libzstd.1.dylib  @executable_path/../Frameworks/libzstd.1.dylib "${app}/Contents/Frameworks/libzip.5.dylib"
-
-cp "${SOURCE_DIR}/3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
-
-if [ -d "${SOURCE_DIR}/3rdparty/lua_code_formatter" ]; then
-  # we renamed lcf at some point
-  LCF_NAME="lua_code_formatter"
-else
-  LCF_NAME="lcf"
-fi
-cp -r "${SOURCE_DIR}/3rdparty/${LCF_NAME}" "${app}/Contents/MacOS"
-if [ "${LCF_NAME}" != "lcf" ]; then
-  mv "${app}/Contents/MacOS/${LCF_NAME}" "${app}/Contents/MacOS/lcf"
-fi
-
-cp "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
+cp -v "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
 # yajl has to be adjusted to load libyajl from the same location
-python macdeployqtfix.py "${app}/Contents/MacOS/yajl.so" "${QT_DIR}"
+
 if [ -n "$GITHUB_REPOSITORY" ] ; then
-  cp "/Users/runner/work/Mudlet/Mudlet/3rdparty/vcpkg/packages/yajl_x64-osx/lib/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
-  install_name_tool -change "/Users/runner/work/Mudlet/Mudlet/3rdparty/vcpkg/packages/yajl_x64-osx/lib/libyajl.2.dylib" "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/MacOS/yajl.so"
+  cp -v "${VCPKG_ROOT}/packages/yajl_${TRIPLET}/lib/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
+  install_name_tool -id "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
+  install_name_tool -change "${VCPKG_ROOT}/packages/yajl_${TRIPLET}/lib/libyajl.2.dylib" "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/MacOS/yajl.so"
 fi
+
+cp -v "${SOURCE_DIR}/3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
+
+# End bundled libraries
+echo "Done bundling libraries"
 
 # Edit some nice plist entries, don't fail if entries already exist
 if [ -z "${ptb}" ]; then
@@ -205,9 +167,9 @@ fi
 
 # Sparkle settings, see https://sparkle-project.org/documentation/customization/#infoplist-settings
 if [ -z "${ptb}" ]; then
-  /usr/libexec/PlistBuddy -c "Add SUFeedURL string https://feeds.dblsqd.com/MKMMR7HNSP65PquQQbiDIw/release/mac/x86_64/appcast" "${app}/Contents/Info.plist" || true
+  /usr/libexec/PlistBuddy -c "Add SUFeedURL string https://feeds.dblsqd.com/MKMMR7HNSP65PquQQbiDIw/release/mac/${ARCH}/appcast" "${app}/Contents/Info.plist" || true
 else
-  /usr/libexec/PlistBuddy -c "Add SUFeedURL string https://feeds.dblsqd.com/MKMMR7HNSP65PquQQbiDIw/public-test-build/mac/x86_64/appcast" "${app}/Contents/Info.plist" || true
+  /usr/libexec/PlistBuddy -c "Add SUFeedURL string https://feeds.dblsqd.com/MKMMR7HNSP65PquQQbiDIw/public-test-build/mac/${ARCH}/appcast" "${app}/Contents/Info.plist" || true
 fi
 /usr/libexec/PlistBuddy -c "Add SUEnableAutomaticChecks bool true" "${app}/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Add SUAllowsAutomaticUpdates bool true" "${app}/Contents/Info.plist" || true

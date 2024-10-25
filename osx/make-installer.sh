@@ -167,9 +167,9 @@ fi
 
 # Sparkle settings, see https://sparkle-project.org/documentation/customization/#infoplist-settings
 if [ -z "${ptb}" ]; then
-  /usr/libexec/PlistBuddy -c "Add SUFeedURL string https://feeds.dblsqd.com/MKMMR7HNSP65PquQQbiDIw/release/mac/${ARCH}/appcast" "${app}/Contents/Info.plist" || true
+  /usr/libexec/PlistBuddy -c "Add SUFeedURL string https://feeds.dblsqd.com/MKMMR7HNSP65PquQQbiDIw/release/mac/${ARCH_DBLSQD}/appcast" "${app}/Contents/Info.plist" || true
 else
-  /usr/libexec/PlistBuddy -c "Add SUFeedURL string https://feeds.dblsqd.com/MKMMR7HNSP65PquQQbiDIw/public-test-build/mac/${ARCH}/appcast" "${app}/Contents/Info.plist" || true
+  /usr/libexec/PlistBuddy -c "Add SUFeedURL string https://feeds.dblsqd.com/MKMMR7HNSP65PquQQbiDIw/public-test-build/mac/${ARCH_DBLSQD}/appcast" "${app}/Contents/Info.plist" || true
 fi
 /usr/libexec/PlistBuddy -c "Add SUEnableAutomaticChecks bool true" "${app}/Contents/Info.plist" || true
 /usr/libexec/PlistBuddy -c "Add SUAllowsAutomaticUpdates bool true" "${app}/Contents/Info.plist" || true

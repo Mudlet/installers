@@ -68,6 +68,8 @@ cp "$SOURCE_DIR"/src/*.aff build/
 # and the .desktop file so linuxdeployqt can pilfer it for info
 cp "$SOURCE_DIR"/mudlet{.desktop,.png,.svg} build/
 
+# sentry.io crashpad handler
+cp "$BUILD_DIR"/crashpad_handler build/
 
 cp -r "$SOURCE_DIR"/3rdparty/lcf build/
 
@@ -122,6 +124,7 @@ echo "Generating AppImage"
   -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so \
   -executable=build/lib/libssl.so.1.1 \
   -executable=build/lib/libssl.so.1.0.0 \
+  -executable=build/crashpad_handler \ 
   -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqttexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
 
 

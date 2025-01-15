@@ -69,7 +69,7 @@ cp "$SOURCE_DIR"/src/*.aff build/
 cp "$SOURCE_DIR"/mudlet{.desktop,.png,.svg} build/
 
 # sentry.io crashpad handler
-cp "$BUILD_DIR"/crashpad_handler build/
+cp "$BUILD_DIR"/src/crashpad_handler build/
 
 cp -r "$SOURCE_DIR"/3rdparty/lcf build/
 

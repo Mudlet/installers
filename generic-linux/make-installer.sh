@@ -124,7 +124,7 @@ echo "Generating AppImage"
   -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so \
   -executable=build/lib/libssl.so.1.1 \
   -executable=build/lib/libssl.so.1.0.0 \
-  -executable=build/crashpad_handler \ 
+  -executable=build/crashpad_handler \
   -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqttexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
 
 

@@ -4,54 +4,72 @@
 set -e
 
 # extract program name for message
-pgm=$(basename "$0")
+PGM=$(basename "$0")
 
+# Where to put the Mudlet source code:
+if [ -z "${SOURCE_DIR}" ]; then
+  SOURCE_DIR="$(pwd)/work_area"
+  export SOURCE_DIR
+fi
+
+echo "Working in: '${SOURCE_DIR}'"
+# Used within this script AND the make-installer one and needed in the latter
+# to force a Qt6 build rather than Qt5:
+QMAKE="$(which qmake6)"
+export QMAKE
 # Retrieve latest source code, keep history as it's useful to edit sometimes
 # if it's already there, keep it as is
-if [ ! -d "source" ]; then
+if [ ! -d "${SOURCE_DIR}" ]; then
   # check command line option for commit-ish that should be checked out
-  commitish="$1"
-  if [ -z "$commitish" ]; then
+  COMMITISH="$1"
+  if [ -z "${COMMITISH}" ]; then
     echo "No 'source' folder exists and no commit-ish given."
-    echo "Usage: $pgm <commit-ish>"
+    echo "Usage: ${PGM} <commit-ish>"
     exit 2
   fi
 
-  git clone --recursive https://github.com/Mudlet/Mudlet.git source
+  git clone https://github.com/Mudlet/Mudlet.git "${SOURCE_DIR}"
 
-  # Switch to $commitish
-  (cd source && git checkout "${commitish}")
+  # Switch to ${COMMITISH}
+  (cd "${SOURCE_DIR}" && git checkout "${COMMITISH}")
 fi
 
 # set the commit ID so the build can reference it later
-cd source
-commit=$(git rev-parse --short HEAD)
+# This path/location is effectively hard coded into this AND the
+# make-installer.sh script:
+cd "${SOURCE_DIR}"
+COMMIT=$(git rev-parse --short HEAD)
 
 # linux assumes compile time dependencies are installed to make this
 # (hopefully) distribution independent
 
 # Add commit information to version and extract version info itself
-cd src/
+cd "${SOURCE_DIR}"/src/
 # find out if we do a dev or a release build
-dev=$(perl -lne 'print $1 if /^BUILD = (.*)$/' < mudlet.pro)
-if [ ! -z "${dev}" ]; then
-  MUDLET_VERSION_BUILD="-dev-$commit"
+DEV=$(perl -lne 'print $1 if /^BUILD = (.*)$/' < mudlet.pro)
+if [ -n "${DEV}" ]; then
+  MUDLET_VERSION_BUILD="-dev-${COMMIT}"
   export MUDLET_VERSION_BUILD
 fi
-version=$(perl -lne 'print $1 if /^VERSION = (.+)/' < mudlet.pro)
+
+VERSION=$(perl -lne 'print $1 if /^VERSION = (.+)/' < mudlet.pro)
+
 cd ..
 
-mkdir -p build
-cd build/
+BUILD_DIR="${SOURCE_DIR}"/build
+export BUILD_DIR
+
+mkdir -p "${BUILD_DIR}"
+cd "${BUILD_DIR}"
 
 # Compile using all available cores
-qmake ../src/mudlet.pro
+"${QMAKE}" "${SOURCE_DIR}"/src/mudlet.pro
 make -j "$(nproc)"
 
 # now run the actual installer creation script
 cd ../..
-if [ ! -z "${dev}" ]; then
-  ./make-installer.sh "${version}${MUDLET_VERSION_BUILD}"
+if [ -n "${DEV}" ]; then
+  ./make-installer.sh "${VERSION}${MUDLET_VERSION_BUILD}"
 else
-  ./make-installer.sh -r "${version}"
+  ./make-installer.sh -r "${VERSION}"
 fi

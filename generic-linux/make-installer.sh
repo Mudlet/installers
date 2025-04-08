@@ -53,20 +53,20 @@ export VERSION
 # setup linuxdeployqt binaries if not found
 if [ "$(getconf LONG_BIT)" = "64" ]; then
   if [[ ! -e linuxdeploy.AppImage ]]; then
-      # download prepackaged linuxdeployqt. Doesn't seem to have a "latest" url yet
+      # download prepackaged linuxdeploy
       echo "linuxdeploy not found - downloading it."
       wget -nv -O linuxdeploy.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
       chmod +x linuxdeploy.AppImage
   fi
   if [[ ! -e linuxdeploy-plugin-qt.AppImage ]]; then
-      # download prepackaged linuxdeployqt. Doesn't seem to have a "latest" url yet
+      # download prepackaged linuxdeploy-plugin-qt.
       echo "linuxdeploy-plugin-qt not found - downloading it."
       wget -nv -O linuxdeploy-plugin-qt.AppImage https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
       chmod +x linuxdeploy-plugin-qt.AppImage
   fi
 
   if [[ ! -e linuxdeploy-plugin-gstreamer.sh ]]; then
-      # download prepackaged linuxdeployqt. Doesn't seem to have a "latest" url yet
+      # download prepackaged linuxdeploy-plugin-gstreamer.
       echo "linuxdeploy-plugin-gstreamer not found - downloading it."
       wget -nv -O linuxdeploy-plugin-gstreamer.sh https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gstreamer/refs/heads/master/linuxdeploy-plugin-gstreamer.sh
       chmod +x linuxdeploy-plugin-gstreamer.sh

@@ -94,8 +94,10 @@ echo "PTB is: \"${PTB}\""
 echo "VERSION is: \"${VERSION}\""
 echo "OUTPUT_NAME is: \"${OUTPUT_NAME}\""
 
-# clean up the build/ folder
-#rm -rf "${BUILD_DIR}"/
+# clean up the build/ folder of intermediate files
+rm -rf "${BUILD_DIR}"/*.o
+rm -rf "${BUILD_DIR}"/*.cpp
+rm -rf "${BUILD_DIR}"/*.h
 #mkdir -p "${BUILD_DIR}"
 
 # delete previous appimage
@@ -103,7 +105,7 @@ rm -f Mudlet*.AppImage
 
 # move the binary up to the build folder (they differ between qmake and cmake,
 # so we use find to find the binary
-#find "${BUILD_DIR}"/ -iname mudlet -type f -exec cp '{}' "${BUILD_DIR}"/ \;
+find "${BUILD_DIR}"/ -iname mudlet -type f -exec cp '{}' "${BUILD_DIR}"/ \;
 # get mudlet-lua in there as well so linuxdeployqt bundles it
 cp -rf "${SOURCE_DIR}"/src/mudlet-lua "${BUILD_DIR}"/
 # copy Lua translations
@@ -114,9 +116,8 @@ mkdir -p "${BUILD_DIR}"/translations/lua
 # place)
 cp "$SOURCE_DIR"/src/*.dic "${BUILD_DIR}"/
 cp "$SOURCE_DIR"/src/*.aff "${BUILD_DIR}"/
-# and the .desktop file so linuxdeployqt can pilfer it for info
+# and the .desktop and files used for icons so linuxdeploy can pilfer them
 cp "$SOURCE_DIR"/mudlet{.desktop,.png,.svg} "${BUILD_DIR}"/
-
 
 cp -r "$SOURCE_DIR"/3rdparty/lcf "${BUILD_DIR}"/
 

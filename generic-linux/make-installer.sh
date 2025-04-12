@@ -77,11 +77,6 @@ export LINUXDEPLOY_OUTPUT_VERSION
 
 # setup linuxdeployqt binaries if not found
 if [ "$(getconf LONG_BIT)" = "64" ]; then
-#  if [[ ! -e appImageTool.AppImage ]]; then
-#      # download prepackaged appImageTool - needed (?) to
-#      echo "appImageTool not found - downloading it."
-#      wget -nv -O appImageTool.AppImage https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
-#  fi
   if [[ ! -e linuxdeploy.AppImage ]]; then
       # download prepackaged linuxdeploy
       echo "linuxdeploy not found - downloading it."
@@ -93,6 +88,13 @@ if [ "$(getconf LONG_BIT)" = "64" ]; then
       echo "linuxdeploy-plugin-qt not found - downloading it."
       wget -nv -O linuxdeploy-plugin-qt.AppImage https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
       chmod +x linuxdeploy-plugin-qt.AppImage
+  fi
+  if [[ ! -e linuxdeploy-plugin-checkrt.sh ]]; then
+      # download prepackaged linuxdeploy-plugin-checkrt.sh - needed to allow an
+      # AppImage build with a newer CRT to run on a system with an older one:
+      echo "linuxdeploy-plugin-checkrt.sh not found - downloading it."
+      wget -nv -O linuxdeploy-plugin-checkrt.sh https://github.com/darealshinji/linuxdeploy-plugin-checkrt/releases/download/continuous/linuxdeploy-plugin-checkrt.sh
+      chmod +x linuxdeploy-plugin-checkrt.sh
   fi
   if [[ ! -e linuxdeploy-plugin-gstreamer.sh ]]; then
       # download prepackaged linuxdeploy-plugin-gstreamer.
@@ -214,7 +216,7 @@ fi
 
 echo "Generating AppImage"
 # Note: the gstreamer plugin needs the patchelf utility!
-./linuxdeploy.AppImage --appdir "${APP_DIR}" --plugin qt --plugin gstreamer --icon-file "${SOURCE_DIR}"/mudlet.svg --desktop-file "${SOURCE_DIR}"/mudlet.desktop --executable "${APP_DIR}"/usr/bin/mudlet --output appimage
+./linuxdeploy.AppImage --appdir "${APP_DIR}" --plugin qt --plugin gstreamer --plugin checkrt --icon-file "${SOURCE_DIR}"/mudlet.svg --desktop-file "${SOURCE_DIR}"/mudlet.desktop --executable "${APP_DIR}"/usr/bin/mudlet --output appimage
 
 # Unfortunately, until https://github.com/linuxdeploy/linuxdeploy-plugin-qt/issues/194
 # is resolved we have to go through the ${APP_DIR}/usr/translations/ directory

@@ -246,7 +246,7 @@ rm "${APP_DIR}"/usr/translations/qtmultimedia_*.qm
 rm "${APP_DIR}"/AppRun
 rm "${APP_DIR}"/AppRun.wrapped
 
-# Rerun the base linuxdeploy to regenerate a new AppImage
-./linuxdeploy.AppImage --appdir "${APP_DIR}" --output appimage
+# Rerun the base linuxdeploy (still with the checkrt plugin) to regenerate a new AppImage
+./linuxdeploy.AppImage --appdir "${APP_DIR}" --plugin checkrt --output appimage
 
 mv Mudlet*.AppImage "${OUTPUT_NAME}.AppImage"

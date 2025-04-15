@@ -96,7 +96,10 @@ do
 done
 
 # extract linuxdeployqt since some environments (like travis) don't allow FUSE
-./linuxdeployqt.AppImage --appimage-extract
+# Temporarily add bundle-everything so that we get something that can still run
+# on older machines - this does make the AppImage larger but is the only way
+# around being forced to use the later Ubuntu 22.04 runner:
+./linuxdeployqt.AppImage --unsupported-bundle-everything --appimage-extract
 
 # a hack to get the Chinese input text plugin for Qt from the Ubuntu package
 # into the Qt for /opt package directory

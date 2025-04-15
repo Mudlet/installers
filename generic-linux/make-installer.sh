@@ -95,18 +95,17 @@ do
   fi
 done
 
-# extract linuxdeployqt since some environments (like travis) don't allow FUSE
-# Temporarily add bundle-everything so that we get something that can still run
-# on older machines - this does make the AppImage larger but is the only way
-# around being forced to use the later Ubuntu 22.04 runner:
-./linuxdeployqt.AppImage --unsupported-bundle-everything --appimage-extract
+# No need to extract linuxdeployqt since although some environments (like
+# travis) don't allow FUSE we do have it in GitHub (and we have included the
+# needed libfuse2 package:
 
-# a hack to get the Chinese input text plugin for Qt from the Ubuntu package
-# into the Qt for /opt package directory
-if [ -n "${QTDIR}" ]; then
-  sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so \
-          "${QTDIR}/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so" || exit
-fi
+# Not including a a hack to get the Chinese input text plugin for Qt from the
+# Ubuntu package into the Qt for /opt package directory because it was for Qt5
+# and we are using Qt6
+#if [ -n "${QTDIR}" ]; then
+#  sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so \
+#          "${QTDIR}/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.so" || exit
+#fi
 
 # Bundle libssl.so so Mudlet works on platforms that only distribute
 # OpenSSL 1.1
@@ -120,17 +119,19 @@ if [ -z "$(ls build/lib/libssl.so*)" ]; then
 fi
 
 echo "Generating AppImage"
-./squashfs-root/AppRun ./build/mudlet -appimage \
-  -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so \
-  -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so \
+# Temporarily add bundle-everything so that we get something that can still run
+# on older machines - this does make the AppImage larger but is the only way
+# around being forced to use the later Ubuntu 22.04 runner:
+./linuxdeployqt.AppImage ./build/mudlet -appimage -unsupported-bundle-everything \
+  -executable=build/lib/rex_pcre.so \
+  -executable=build/lib/zip.so \
+  -executable=build/lib/luasql/sqlite3.so \
+  -executable=build/lib/yajl.so \
   -executable=build/lib/libssl.so.1.1 \
   -executable=build/lib/libssl.so.1.0.0 \
-  -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqttexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
-
-
-# clean up extracted appimage
-rm -rf squashfs-root/
-
+  -extra-plugins=texttospeech/libqttexttospeech_flite.so,\
+texttospeech/libqttexttospeech_speechd.so,\
+platforminputcontexts/libibusplatforminputcontextplugin.so
 
 if [ -z "${release}" ]; then
   output_name="Mudlet-${version}"

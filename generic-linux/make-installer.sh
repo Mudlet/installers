@@ -153,8 +153,18 @@ find "${BUILD_DIR}"/ -iname mudlet -type f -exec cp '{}' "${APP_DIR}"/usr/bin \;
 cp -rf "${SOURCE_DIR}"/src/mudlet-lua/lua "${APP_DIR}"/usr/share/applications/mudlet
 # get the lua code formatter files in:
 cp -rf "${SOURCE_DIR}"/3rdparty/lcf "${APP_DIR}"/usr/share/applications/mudlet
-# copy Lua translations only copy if folder exists
-[ -d "${SOURCE_DIR}"/translations/lua ] && cp -f "${SOURCE_DIR}"/translations/lua/translated/*.json "${APP_DIR}"/usr/share/applications/mudlet/lua/translations
+# copy Lua translations, only copy if folder exists
+if [ -d "${SOURCE_DIR}"/translations/lua ]; then
+  cp -f "${SOURCE_DIR}"/translations/lua/translated/*.json "${APP_DIR}"/usr/share/applications/mudlet/lua/translations
+  # We also need the untranslated table for en_US locale
+  cp -f "${SOURCE_DIR}"/translations/lua/mudlet-lua.json "${APP_DIR}"/usr/share/applications/mudlet/lua/translations
+  # Change to the directory to keep the symbolic link simple
+  pushd "${APP_DIR}"/usr/share/applications/mudlet/lua/translations
+  # Make a symbolic link so that mudlet-lua_en_US.json is a meaningful file reference
+  ln -s ./mudlet-lua.json ./mudlet-lua_en_US.json
+  # Return to where we were
+  popd
+fi
 
 # and the dictionary files in case the user system doesn't have them (at a known
 # place)

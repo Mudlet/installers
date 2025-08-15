@@ -141,6 +141,14 @@ fi
 
 cp -v "${SOURCE_DIR}/3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 
+# Copy Sentry crashpad handler for crash reporting
+if [ -f "${BUILD_DIR}/src/crashpad_handler" ]; then
+    cp -v "${BUILD_DIR}/src/crashpad_handler" "${app}/Contents/MacOS/"
+    echo "Copied crashpad_handler for Sentry crash reporting"
+else
+    echo "Warning: crashpad_handler not found, Sentry crash reporting may not work"
+fi
+
 # End bundled libraries
 echo "Done bundling libraries"
 
@@ -204,6 +212,12 @@ if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
   codesign --deep --force -o runtime --sign "$IDENTITY" "${app}/Contents/Frameworks/Sparkle.framework/Updater.app"
   codesign --deep --force -o runtime --sign "$IDENTITY" "${app}/Contents/Frameworks/Sparkle.framework/XPCServices/Installer.xpc"
   codesign --deep --force -o runtime --sign "$IDENTITY" "${app}/Contents/Frameworks/Sparkle.framework/XPCServices/Downloader.xpc"
+  
+  # Sign crashpad_handler if it exists
+  if [ -f "${app}/Contents/MacOS/crashpad_handler" ]; then
+    codesign --deep --force -o runtime --sign "$IDENTITY" "${app}/Contents/MacOS/crashpad_handler"
+    echo "Signed crashpad_handler for Sentry crash reporting"
+  fi
   
   # now, codesign the whole app.
   codesign --deep --force -o runtime --sign "$IDENTITY" "${app}"

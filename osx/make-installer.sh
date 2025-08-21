@@ -229,4 +229,16 @@ else
 fi
 
 # Last: build *.dmg file
-appdmg "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json" "${HOME}/Desktop/$(basename "${app%.*}").dmg"
+for i in {1..5}; do
+    echo "Attempt $i of 5..."
+    if appdmg "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json" "${HOME}/Desktop/$(basename "${app%.*}").dmg"; then
+        echo "Success on attempt $i!"
+        exit 0
+    else
+        echo "Attempt $i failed"
+        if [ $i -lt 5 ]; then
+            echo "Retrying..."
+            sleep 2
+        fi
+    fi
+done

@@ -113,6 +113,8 @@ echo "Bundling dynamic libraries"
 cp -v "${HOME}/.luarocks/lib/lua/5.1/lfs.so" "${app}/Contents/MacOS"
 cp -v "${HOME}/.luarocks/lib/lua/5.1/rex_pcre.so" "${app}/Contents/MacOS"
 # rex_pcre has to be adjusted to load libpcre from the same location
+cp -v "${HOMEBREW_PREFIX}/opt/pcre/lib/libpcre.1.dylib" "${app}/Contents/Frameworks/libpcre.1.dylib"
+install_name_tool -id "@executable_path/../Frameworks/libpcre.1.dylib" "${app}/Contents/Frameworks/libpcre.1.dylib"
 install_name_tool -change "${HOMEBREW_PREFIX}/opt/pcre/lib/libpcre.1.dylib" "@executable_path/../Frameworks/libpcre.1.dylib" "${app}/Contents/MacOS/rex_pcre.so"
 
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
@@ -132,12 +134,9 @@ cp -r "${SOURCE_DIR}/3rdparty/lcf" "${app}/Contents/MacOS"
 
 cp -v "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
 # yajl has to be adjusted to load libyajl from the same location
-
-if [ -n "$GITHUB_REPOSITORY" ] ; then
-  cp -v "${VCPKG_ROOT}/packages/yajl_${TRIPLET}/lib/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
-  install_name_tool -id "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
-  install_name_tool -change "${VCPKG_ROOT}/packages/yajl_${TRIPLET}/lib/libyajl.2.dylib" "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/MacOS/yajl.so"
-fi
+cp -v "${HOMEBREW_PREFIX}/opt/yajl/lib/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
+install_name_tool -id "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
+install_name_tool -change "${HOMEBREW_PREFIX}/opt/yajl/lib/libyajl.2.dylib" "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/MacOS/yajl.so"
 
 cp -v "${SOURCE_DIR}/3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 

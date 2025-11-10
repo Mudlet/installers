@@ -132,12 +132,9 @@ cp -r "${SOURCE_DIR}/3rdparty/lcf" "${app}/Contents/MacOS"
 
 cp -v "${HOME}/.luarocks/lib/lua/5.1/yajl.so" "${app}/Contents/MacOS"
 # yajl has to be adjusted to load libyajl from the same location
-
-if [ -n "$GITHUB_REPOSITORY" ] ; then
-  cp -v "${VCPKG_ROOT}/packages/yajl_${TRIPLET}/lib/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
-  install_name_tool -id "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
-  install_name_tool -change "${VCPKG_ROOT}/packages/yajl_${TRIPLET}/lib/libyajl.2.dylib" "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/MacOS/yajl.so"
-fi
+cp -v "${HOMEBREW_PREFIX}/opt/yajl/lib/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
+install_name_tool -id "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/Frameworks/libyajl.2.dylib"
+install_name_tool -change "${HOMEBREW_PREFIX}/opt/yajl/lib/libyajl.2.dylib" "@executable_path/../Frameworks/libyajl.2.dylib" "${app}/Contents/MacOS/yajl.so"
 
 cp -v "${SOURCE_DIR}/3rdparty/discord/rpc/lib/libdiscord-rpc.dylib" "${app}/Contents/Frameworks"
 

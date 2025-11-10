@@ -125,8 +125,43 @@ echo "Generating AppImage"
   -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqttexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
 
 
-# clean up extracted appimage
+# Workaround for qtkeychain password storage issue #6730
+# Extract the AppImage, remove bundled libglib, then repackage it
+# This is necessary because the bundled libglib-2.0.so.0 library in the AppImage
+# conflicts with qtkeychain's ability to access the system's secure storage.
+# Solution based on Nextcloud Desktop's approach:
+# https://github.com/nextcloud/desktop/blob/master/admin/linux/build-appimage.sh
+echo "Applying libglib workaround for password storage (#6730)..."
+TEMP_APPIMAGE=$(ls Mudlet*.AppImage)
+chmod +x "${TEMP_APPIMAGE}"
+./"${TEMP_APPIMAGE}" --appimage-extract
+rm ./"${TEMP_APPIMAGE}"
+
+# Remove the bundled libglib that causes keychain issues
+if [ -f ./squashfs-root/usr/lib/libglib-2.0.so.0 ]; then
+  echo "Removing bundled libglib-2.0.so.0..."
+  rm ./squashfs-root/usr/lib/libglib-2.0.so.0
+else
+  echo "Warning: libglib-2.0.so.0 not found in expected location"
+fi
+
+# Download appimagetool for repackaging
+if [ ! -e appimagetool-x86_64.AppImage ]; then
+  echo "Downloading appimagetool..."
+  wget --quiet -O appimagetool-x86_64.AppImage https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+  chmod +x appimagetool-x86_64.AppImage
+fi
+
+# Extract appimagetool since some environments don't allow FUSE
+./appimagetool-x86_64.AppImage --appimage-extract
+mv squashfs-root squashfs-root-appimagetool
+
+# Repackage the AppImage without libglib
+./squashfs-root-appimagetool/AppRun -n squashfs-root
+
+# clean up extracted appimages
 rm -rf squashfs-root/
+rm -rf squashfs-root-appimagetool/
 
 
 if [ -z "${release}" ]; then

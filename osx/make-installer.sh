@@ -113,6 +113,8 @@ echo "Bundling dynamic libraries"
 cp -v "${HOME}/.luarocks/lib/lua/5.1/lfs.so" "${app}/Contents/MacOS"
 cp -v "${HOME}/.luarocks/lib/lua/5.1/rex_pcre.so" "${app}/Contents/MacOS"
 # rex_pcre has to be adjusted to load libpcre from the same location
+cp -v "${HOMEBREW_PREFIX}/opt/pcre/lib/libpcre.1.dylib" "${app}/Contents/Frameworks/libpcre.1.dylib"
+install_name_tool -id "@executable_path/../Frameworks/libpcre.1.dylib" "${app}/Contents/Frameworks/libpcre.1.dylib"
 install_name_tool -change "${HOMEBREW_PREFIX}/opt/pcre/lib/libpcre.1.dylib" "@executable_path/../Frameworks/libpcre.1.dylib" "${app}/Contents/MacOS/rex_pcre.so"
 
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"

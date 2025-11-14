@@ -152,16 +152,12 @@ if [ ! -e appimagetool-x86_64.AppImage ]; then
   chmod +x appimagetool-x86_64.AppImage
 fi
 
-# Extract appimagetool since some environments don't allow FUSE
-./appimagetool-x86_64.AppImage --appimage-extract
-mv squashfs-root squashfs-root-appimagetool
-
 # Repackage the AppImage without libglib
-./squashfs-root-appimagetool/AppRun -n squashfs-root
+# GitHub Actions supports FUSE, so we can run appimagetool directly
+./appimagetool-x86_64.AppImage -n squashfs-root
 
-# clean up extracted appimages
+# clean up extracted appimage
 rm -rf squashfs-root/
-rm -rf squashfs-root-appimagetool/
 
 
 if [ -z "${release}" ]; then

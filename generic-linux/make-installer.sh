@@ -154,7 +154,8 @@ fi
 
 # Repackage the AppImage without libglib
 # GitHub Actions supports FUSE, so we can run appimagetool directly
-./appimagetool-x86_64.AppImage -n squashfs-root
+# Use the original filename that was saved earlier
+./appimagetool-x86_64.AppImage -n squashfs-root "${TEMP_APPIMAGE}"
 
 # clean up extracted appimage
 rm -rf squashfs-root/

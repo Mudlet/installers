@@ -137,13 +137,16 @@ chmod +x "${TEMP_APPIMAGE}"
 ./"${TEMP_APPIMAGE}" --appimage-extract
 rm ./"${TEMP_APPIMAGE}"
 
-# Remove the bundled libglib that causes keychain issues
-if [ -f ./squashfs-root/usr/lib/libglib-2.0.so.0 ]; then
-  echo "Removing bundled libglib-2.0.so.0..."
-  rm ./squashfs-root/usr/lib/libglib-2.0.so.0
-else
-  echo "Warning: libglib-2.0.so.0 not found in expected location"
-fi
+# Remove the bundled libraries that cause keychain issues
+# Check both common library locations (usr/lib and lib)
+for lib in libglib-2.0.so.0 libgthread-2.0.so.0; do
+  for libpath in ./squashfs-root/usr/lib ./squashfs-root/lib; do
+    if [ -f "${libpath}/${lib}" ]; then
+      echo "Removing bundled ${lib} from ${libpath}..."
+      rm "${libpath}/${lib}"
+    fi
+  done
+done
 
 # Download appimagetool for repackaging
 if [ ! -e appimagetool-x86_64.AppImage ]; then

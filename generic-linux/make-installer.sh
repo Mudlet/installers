@@ -78,7 +78,7 @@ mkdir -p build/lib/brimworks
 
 cp "$SOURCE_DIR"/3rdparty/discord/rpc/lib/libdiscord-rpc.so build/lib/
 
-for lib in lfs rex_pcre2 luasql/sqlite3 brimworks/zip lua-utf8 yajl
+for lib in lfs rex_pcre luasql/sqlite3 brimworks/zip lua-utf8 yajl
 do
   found=0
   for path in $(luarocks path --lr-cpath | tr ";" "\n")
@@ -118,7 +118,7 @@ fi
 
 echo "Generating AppImage"
 ./squashfs-root/AppRun ./build/mudlet -appimage \
-  -executable=build/lib/rex_pcre2.so -executable=build/lib/zip.so \
+  -executable=build/lib/rex_pcre.so -executable=build/lib/zip.so \
   -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so \
   -executable=build/lib/libssl.so.1.1 \
   -executable=build/lib/libssl.so.1.0.0 \

@@ -55,6 +55,18 @@ rm -f Mudlet*.AppImage
 # move the binary up to the build folder (they differ between qmake and cmake,
 # so we use find to find the binary
 find "$BUILD_DIR"/ -iname mudlet -type f -exec cp '{}' build/ \;
+
+if [ "$WITH_SENTRY" = "ON" ]; then
+  for f in mudletcrashreporter crashpad_handler; do
+    found_file=$(find "$BUILD_DIR"/ -iname "$f" -type f)
+    if [ -z "$found_file" ]; then
+      echo "Error: $f not found in $BUILD_DIR"
+      exit 1
+    fi
+    cp "$found_file" build/
+  done
+fi
+
 # get mudlet-lua in there as well so linuxdeployqt bundles it
 cp -rf "$SOURCE_DIR"/src/mudlet-lua build/
 # copy Lua translations

@@ -112,10 +112,24 @@ python macdeployqtfix.py "${app}/Contents/MacOS/Mudlet" "${QT_DIR}" $( [ -n "$DE
 echo "Bundling dynamic libraries"
 cp -v "${HOME}/.luarocks/lib/lua/5.1/lfs.so" "${app}/Contents/MacOS"
 cp -v "${HOME}/.luarocks/lib/lua/5.1/rex_pcre2.so" "${app}/Contents/MacOS"
-# rex_pcre2 has to be adjusted to load libpcre2 from the same location
-cp -v "${HOMEBREW_PREFIX}/opt/pcre2/lib/libpcre2-8.0.dylib" "${app}/Contents/Frameworks/libpcre2-8.0.dylib"
-install_name_tool -id "@executable_path/../Frameworks/libpcre2-8.0.dylib" "${app}/Contents/Frameworks/libpcre2-8.0.dylib"
-install_name_tool -change "${HOMEBREW_PREFIX}/opt/pcre2/lib/libpcre2-8.0.dylib" "@executable_path/../Frameworks/libpcre2-8.0.dylib" "${app}/Contents/MacOS/rex_pcre2.so"
+
+# ======= Bundle Sentry executables =======
+if [ "$WITH_SENTRY" = "ON" ]; then
+    for f in MudletCrashReporter crashpad_handler; do
+        found_file=$(find "$BUILD_DIR"/ -iname "$f" -type f)
+        if [ -z "$found_file" ]; then
+            echo "Error: $f not found in $BUILD_DIR"
+            exit 1
+        fi
+        cp "$found_file" "${app}/Contents/MacOS/"
+        chmod +x "${app}/Contents/MacOS/$f"
+    done
+fi
+
+# rex_pcre has to be adjusted to load libpcre from the same location
+cp -v "${HOMEBREW_PREFIX}/opt/pcre/lib/libpcre.1.dylib" "${app}/Contents/Frameworks/libpcre.1.dylib"
+install_name_tool -id "@executable_path/../Frameworks/libpcre.1.dylib" "${app}/Contents/Frameworks/libpcre.1.dylib"
+install_name_tool -change "${HOMEBREW_PREFIX}/opt/pcre/lib/libpcre.1.dylib" "@executable_path/../Frameworks/libpcre.1.dylib" "${app}/Contents/MacOS/rex_pcre.so"
 
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
 cp -v ${HOMEBREW_PREFIX}/opt/sqlite/lib/libsqlite3.0.dylib  "${app}/Contents/Frameworks/"

@@ -125,7 +125,7 @@ if [ "$WITH_SENTRY" = "ON" ]; then
             echo "Error: $f not found in $BUILD_DIR"
             exit 1
         fi
-        cp "$found_file" "${app}/Contents/MacOS/"
+        cp -f "$found_file" "${app}/Contents/MacOS/"
         chmod +x "${app}/Contents/MacOS/$f"
     done
 fi

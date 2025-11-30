@@ -63,7 +63,7 @@ if [ "$WITH_SENTRY" = "ON" ]; then
       echo "Error: $f not found in $BUILD_DIR"
       exit 1
     fi
-    cp "$found_file" build/
+    cp -f "$found_file" build/
   done
 fi
 

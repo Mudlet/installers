@@ -57,7 +57,7 @@ rm -f Mudlet*.AppImage
 find "$BUILD_DIR"/ -iname mudlet -type f -exec cp '{}' build/ \;
 
 if [ "$WITH_SENTRY" = "ON" ]; then
-  cp -v "$BUILD_DIR/src/mudletcrashreporter" build/
+  cp -v "$BUILD_DIR/src/MudletCrashReporter" build/
   cp -v "$BUILD_DIR/src/crashpad_handler" build/
 fi
 

@@ -57,14 +57,8 @@ rm -f Mudlet*.AppImage
 find "$BUILD_DIR"/ -iname mudlet -type f -exec cp '{}' build/ \;
 
 if [ "$WITH_SENTRY" = "ON" ]; then
-  for f in mudletcrashreporter crashpad_handler; do
-    found_file=$(find "$BUILD_DIR"/ -iname "$f" -type f)
-    if [ -z "$found_file" ]; then
-      echo "Error: $f not found in $BUILD_DIR"
-      exit 1
-    fi
-    cp -f "$found_file" build/
-  done
+  cp -v "$BUILD_DIR/src/mudletcrashreporter" build/
+  cp -v "$BUILD_DIR/src/crashpad_handler" build/
 fi
 
 # get mudlet-lua in there as well so linuxdeployqt bundles it

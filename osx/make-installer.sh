@@ -120,10 +120,10 @@ install_name_tool -change "${HOMEBREW_PREFIX}/opt/pcre2/lib/libpcre2-8.0.dylib" 
 cp -r "${HOME}/.luarocks/lib/lua/5.1/luasql" "${app}/Contents/MacOS"
 cp -v ${HOMEBREW_PREFIX}/opt/sqlite/lib/libsqlite3.0.dylib  "${app}/Contents/Frameworks/"
 install_name_tool -id  "@executable_path/../Frameworks/libsqlite3.0.dylib" "${app}/Contents/Frameworks/libsqlite3.0.dylib"
-# need to adjust sqlite3.so manually as it is a level lower than expected...
 # fix both versioned and unversioned references - luarocks may link against either depending on build environment
-install_name_tool -change "${HOMEBREW_PREFIX}/opt/sqlite/lib/libsqlite3.0.dylib" "@executable_path/../../Frameworks/libsqlite3.0.dylib" "${app}/Contents/MacOS/luasql/sqlite3.so"
-install_name_tool -change "${HOMEBREW_PREFIX}/opt/sqlite/lib/libsqlite3.dylib" "@executable_path/../../Frameworks/libsqlite3.0.dylib" "${app}/Contents/MacOS/luasql/sqlite3.so"
+# @executable_path always refers to the main executable (Contents/MacOS), not the loading library's location
+install_name_tool -change "${HOMEBREW_PREFIX}/opt/sqlite/lib/libsqlite3.0.dylib" "@executable_path/../Frameworks/libsqlite3.0.dylib" "${app}/Contents/MacOS/luasql/sqlite3.so"
+install_name_tool -change "${HOMEBREW_PREFIX}/opt/sqlite/lib/libsqlite3.dylib" "@executable_path/../Frameworks/libsqlite3.0.dylib" "${app}/Contents/MacOS/luasql/sqlite3.so"
 
 cp -v "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
 

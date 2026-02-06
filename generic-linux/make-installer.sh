@@ -138,6 +138,7 @@ echo "Generating AppImage"
 # Solution based on Nextcloud Desktop's approach:
 # https://github.com/nextcloud/desktop/blob/master/admin/linux/build-appimage.sh
 echo "Applying libglib workaround for password storage (#6730)..."
+rm -rf squashfs-root/
 TEMP_APPIMAGE=$(ls Mudlet*.AppImage)
 chmod +x "${TEMP_APPIMAGE}"
 ./"${TEMP_APPIMAGE}" --appimage-extract

@@ -101,11 +101,6 @@ do
   fi
 done
 
-# extract linuxdeployqt since some environments (like travis) don't allow FUSE
-echo "Extracting linuxdeployqt.AppImage..."
-./linuxdeployqt.AppImage --appimage-extract
-mv ./squashfs-root/ ./linuxdeployqt-squashfs-root/
-
 # a hack to get the Chinese input text plugin for Qt from the Ubuntu package
 # into the Qt for /opt package directory
 if [ -n "${QTDIR}" ]; then
@@ -125,7 +120,7 @@ if [ -z "$(ls build/lib/libssl.so*)" ]; then
 fi
 
 echo "Generating AppImage"
-./linuxdeployqt-squashfs-root/AppRun ./build/mudlet -appimage \
+./linuxdeployqt.AppImage ./build/mudlet -appimage \
   -executable=build/lib/rex_pcre2.so -executable=build/lib/zip.so \
   -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so \
   -executable=build/lib/libssl.so.1.1 \
@@ -133,7 +128,6 @@ echo "Generating AppImage"
   -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqttexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
 
 echo "Removing remnants of linuxdeployqt.AppImage ..."
-rm -rf linuxdeployqt-squashfs-root/
 rm -rf squashfs-root/
 
 # Workaround for qtkeychain password storage issue #6730

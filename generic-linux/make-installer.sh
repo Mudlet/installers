@@ -102,7 +102,9 @@ do
 done
 
 # extract linuxdeployqt since some environments (like travis) don't allow FUSE
+echo "Extracting linuxdeployqt.AppImage..."
 ./linuxdeployqt.AppImage --appimage-extract
+mv ./squashfs-root/ ./linuxdeployqt-squashfs-root/
 
 # a hack to get the Chinese input text plugin for Qt from the Ubuntu package
 # into the Qt for /opt package directory
@@ -123,13 +125,16 @@ if [ -z "$(ls build/lib/libssl.so*)" ]; then
 fi
 
 echo "Generating AppImage"
-./squashfs-root/AppRun ./build/mudlet -appimage \
+./linuxdeployqt-squashfs-root/AppRun ./build/mudlet -appimage \
   -executable=build/lib/rex_pcre2.so -executable=build/lib/zip.so \
   -executable=build/lib/luasql/sqlite3.so -executable=build/lib/yajl.so \
   -executable=build/lib/libssl.so.1.1 \
   -executable=build/lib/libssl.so.1.0.0 \
   -extra-plugins=texttospeech/libqttexttospeech_flite.so,texttospeech/libqttexttospeech_speechd.so,platforminputcontexts/libcomposeplatforminputcontextplugin.so,platforminputcontexts/libibusplatforminputcontextplugin.so,platforminputcontexts/libfcitxplatforminputcontextplugin.so
 
+echo "Removing remnants of linuxdeployqt.AppImage ..."
+rm -rf linuxdeployqt-squashfs-root/
+rm -rf squashfs-root/
 
 # Workaround for qtkeychain password storage issue #6730
 # Extract the AppImage, remove bundled libglib, then repackage it
@@ -138,7 +143,6 @@ echo "Generating AppImage"
 # Solution based on Nextcloud Desktop's approach:
 # https://github.com/nextcloud/desktop/blob/master/admin/linux/build-appimage.sh
 echo "Applying libglib workaround for password storage (#6730)..."
-rm -rf squashfs-root/
 TEMP_APPIMAGE=$(ls Mudlet*.AppImage)
 chmod +x "${TEMP_APPIMAGE}"
 ./"${TEMP_APPIMAGE}" --appimage-extract

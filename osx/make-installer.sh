@@ -127,6 +127,8 @@ install_name_tool -change "${HOMEBREW_PREFIX}/opt/sqlite/lib/libsqlite3.dylib" "
 
 cp -v "${HOME}/.luarocks/lib/lua/5.1/lua-utf8.so" "${app}/Contents/MacOS"
 
+cp -v "${HOME}/.luarocks/lib/lua/5.1/lpeg.so" "${app}/Contents/MacOS"
+
 # The lua-zip rock
 mkdir "${app}/Contents/MacOS/brimworks"
 cp -v "${HOME}/.luarocks/lib/lua/5.1/brimworks/zip.so" "${app}/Contents/MacOS/brimworks" 

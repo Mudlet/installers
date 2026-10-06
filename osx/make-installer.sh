@@ -56,6 +56,9 @@ then
     exit 1
 fi
 
+# Resolved before the cd below: outside GitHub Actions SOURCE_DIR is relative to here
+ENTITLEMENTS_FILE="$(cd "${SOURCE_DIR}" && pwd)/src/mudlet.entitlements"
+
 cd "${BUILD_DIR}"
 
 # get the app to package
@@ -231,6 +234,13 @@ if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
 
   # now, codesign the whole app.
   codesign_with_retry --deep --force -o runtime --sign "$IDENTITY" "${app}"
+  # Then the app itself once more with Mudlet's entitlements, without --deep so
+  # Sparkle's helpers do not get them. The hardened runtime refuses the
+  # microphone to an app without audio-input, whatever the player allows, so
+  # speech-to-text needs this. Skipped for a Mudlet that predates the file.
+  if [ -f "${ENTITLEMENTS_FILE}" ]; then
+    codesign_with_retry --force -o runtime --entitlements "${ENTITLEMENTS_FILE}" --sign "$IDENTITY" "${app}"
+  fi
   echo "Validating codesigning worked with codesign -vv --deep-verify:"
   codesign -vv --deep-verify "${app}"
 fi

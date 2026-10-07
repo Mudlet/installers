@@ -208,6 +208,21 @@ fi
 /usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0:UTTypeConformsTo:0 string public.data" "${app}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0:UTTypeConformsTo:1 string public.zip" "${app}/Contents/Info.plist"
 
+# The build records search paths into the CI machine and Homebrew, and the
+# main binary looks in /opt/homebrew/lib ahead of its own Frameworks. Only
+# paths inside the app are kept: library validation is all that stops one of
+# those loading in place of a bundled library. Before signing, since this
+# changes the binaries.
+while IFS= read -r -d '' binary; do
+  file -b "${binary}" | grep -q "Mach-O" || continue
+  otool -l "${binary}" | awk '/cmd LC_RPATH/{getline; getline; print $2}' | while IFS= read -r rpath; do
+    case "${rpath}" in
+      @executable_path/*|@loader_path/*) ;;
+      *) install_name_tool -delete_rpath "${rpath}" "${binary}" ;;
+    esac
+  done
+done < <(find "${app}/Contents" -type f \( -perm -u+x -o -name "*.dylib" -o -name "*.so" \) -print0)
+
 # Apple's timestamp service can be temporarily unavailable, so retry codesigning
 codesign_with_retry() {
   local max_attempts=3

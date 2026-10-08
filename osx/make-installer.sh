@@ -215,9 +215,12 @@ fi
 # changes the binaries.
 while IFS= read -r -d '' binary; do
   file -b "${binary}" | grep -q "Mach-O" || continue
+  # Its own assignment, so a failed inspection stops the script under set -e
+  # rather than passing for a binary with nothing to strip
+  load_commands=$(otool -l "${binary}")
   # The whole path, spaces included: only the "path " label and the
   # "(offset N)" otool appends are removed
-  otool -l "${binary}" | awk '/cmd LC_RPATH/{getline; getline; sub(/^ *path /, ""); sub(/ \(offset [0-9]+\)$/, ""); print}' | while IFS= read -r rpath; do
+  printf '%s\n' "${load_commands}" | awk '/cmd LC_RPATH/{getline; getline; sub(/^ *path /, ""); sub(/ \(offset [0-9]+\)$/, ""); print}' | while IFS= read -r rpath; do
     case "${rpath}" in
       @executable_path/*|@loader_path/*) ;;
       *) install_name_tool -delete_rpath "${rpath}" "${binary}" ;;

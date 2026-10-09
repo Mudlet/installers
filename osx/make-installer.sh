@@ -218,7 +218,7 @@ while IFS= read -r -d '' binary; do
   # Assigned separately so set -e catches an otool failure; a pipeline would hide it
   load_commands=$(otool -l "${binary}")
   # A universal binary lists each rpath once per architecture, and one delete removes it from all;
-  # one that only some architectures carry makes install_name_tool fail, stopping packaging
+  # one that only some architectures carry can make install_name_tool fail, stopping packaging
   rpaths=$(printf '%s\n' "${load_commands}" | awk '/cmd LC_RPATH/{getline; getline; sub(/^ *path /, ""); sub(/ \(offset [0-9]+\)$/, ""); if (!seen[$0]++) print}')
   while IFS= read -r rpath; do
     case "${rpath}" in
@@ -226,7 +226,7 @@ while IFS= read -r -d '' binary; do
       *) install_name_tool -delete_rpath "${rpath}" "${binary}" ;;
     esac
   done <<< "${rpaths}"
-  # Checked with a different matcher, so a change in otool's output can't strip nothing unnoticed
+  # Re-read with a looser matcher, so an awk misparse that deletes nothing still fails
   if otool -l "${binary}" | grep -A2 "cmd LC_RPATH" | grep -E "^ *path " | grep -vqE "^ *path @(executable|loader)_path(/| |$)"; then
     echo "Error: ${binary} still has an rpath outside the app" >&2
     exit 1

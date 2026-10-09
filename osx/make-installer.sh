@@ -217,7 +217,8 @@ while IFS= read -r -d '' binary; do
   file -b "${binary}" | grep -q "Mach-O" || continue
   # Assigned separately so set -e catches an otool failure; a pipeline would hide it
   load_commands=$(otool -l "${binary}")
-  # A universal binary lists each rpath once per architecture, and one delete removes it from all
+  # A universal binary lists each rpath once per architecture, and one delete removes it from all;
+  # one that only some architectures carry makes install_name_tool fail, stopping packaging
   rpaths=$(printf '%s\n' "${load_commands}" | awk '/cmd LC_RPATH/{getline; getline; sub(/^ *path /, ""); sub(/ \(offset [0-9]+\)$/, ""); if (!seen[$0]++) print}')
   while IFS= read -r rpath; do
     case "${rpath}" in

@@ -208,25 +208,34 @@ fi
 /usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0:UTTypeConformsTo:0 string public.data" "${app}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0:UTTypeConformsTo:1 string public.zip" "${app}/Contents/Info.plist"
 
-# The build records search paths into the CI machine and Homebrew, and the
-# main binary looks in /opt/homebrew/lib ahead of its own Frameworks. Only
-# paths inside the app are kept: library validation is all that stops one of
-# those loading in place of a bundled library. Before signing, since this
-# changes the binaries.
+# The build leaves rpaths into the CI checkout and Homebrew, searched ahead of
+# the app's own Frameworks, so only library validation would stop a Homebrew
+# library loading in place of a bundled one. Keep only @executable_path and
+# @loader_path ones. Before signing, since this changes the binaries.
+checked=0
 while IFS= read -r -d '' binary; do
   file -b "${binary}" | grep -q "Mach-O" || continue
-  # Its own assignment, so a failed inspection stops the script under set -e
-  # rather than passing for a binary with nothing to strip
+  # Assigned separately so set -e catches an otool failure; a pipeline would hide it
   load_commands=$(otool -l "${binary}")
-  # The whole path, spaces included: only the "path " label and the
-  # "(offset N)" otool appends are removed
-  printf '%s\n' "${load_commands}" | awk '/cmd LC_RPATH/{getline; getline; sub(/^ *path /, ""); sub(/ \(offset [0-9]+\)$/, ""); print}' | while IFS= read -r rpath; do
+  # A universal binary lists each rpath once per architecture, and one delete removes it from all
+  rpaths=$(printf '%s\n' "${load_commands}" | awk '/cmd LC_RPATH/{getline; getline; sub(/^ *path /, ""); sub(/ \(offset [0-9]+\)$/, ""); if (!seen[$0]++) print}')
+  while IFS= read -r rpath; do
     case "${rpath}" in
-      @executable_path/*|@loader_path/*) ;;
+      ""|@executable_path|@executable_path/*|@loader_path|@loader_path/*) ;;
       *) install_name_tool -delete_rpath "${rpath}" "${binary}" ;;
     esac
-  done
+  done <<< "${rpaths}"
+  # Checked with a different matcher, so a change in otool's output can't strip nothing unnoticed
+  if otool -l "${binary}" | grep -A2 "cmd LC_RPATH" | grep -E "^ *path " | grep -vqE "^ *path @(executable|loader)_path(/| |$)"; then
+    echo "Error: ${binary} still has an rpath outside the app" >&2
+    exit 1
+  fi
+  checked=$((checked + 1))
 done < <(find "${app}/Contents" -type f \( -perm -u+x -o -name "*.dylib" -o -name "*.so" \) -print0)
+if [ "${checked}" -eq 0 ]; then
+  echo "Error: found no binaries in ${app} to strip rpaths from" >&2
+  exit 1
+fi
 
 # Apple's timestamp service can be temporarily unavailable, so retry codesigning
 codesign_with_retry() {

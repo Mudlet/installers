@@ -208,6 +208,36 @@ fi
 /usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0:UTTypeConformsTo:0 string public.data" "${app}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Add UTExportedTypeDeclarations:0:UTTypeConformsTo:1 string public.zip" "${app}/Contents/Info.plist"
 
+# The build leaves rpaths into the CI checkout and Homebrew, searched ahead of
+# the app's own Frameworks, so only library validation would stop a Homebrew
+# library loading in place of a bundled one. Keep only @executable_path and
+# @loader_path ones. Before signing, since this changes the binaries.
+checked=0
+while IFS= read -r -d '' binary; do
+  file -b "${binary}" | grep -q "Mach-O" || continue
+  # Assigned separately so set -e catches an otool failure; a pipeline would hide it
+  load_commands=$(otool -l "${binary}")
+  # A universal binary lists each rpath once per architecture, and one delete removes it from all;
+  # one that only some architectures carry can make install_name_tool fail, stopping packaging
+  rpaths=$(printf '%s\n' "${load_commands}" | awk '/cmd LC_RPATH/{getline; getline; sub(/^ *path /, ""); sub(/ \(offset [0-9]+\)$/, ""); if (!seen[$0]++) print}')
+  while IFS= read -r rpath; do
+    case "${rpath}" in
+      ""|@executable_path|@executable_path/*|@loader_path|@loader_path/*) ;;
+      *) install_name_tool -delete_rpath "${rpath}" "${binary}" ;;
+    esac
+  done <<< "${rpaths}"
+  # Re-read with a looser matcher, so an awk misparse that deletes nothing still fails
+  if otool -l "${binary}" | grep -A2 "cmd LC_RPATH" | grep -E "^ *path " | grep -vqE "^ *path @(executable|loader)_path(/| |$)"; then
+    echo "Error: ${binary} still has an rpath outside the app" >&2
+    exit 1
+  fi
+  checked=$((checked + 1))
+done < <(find "${app}/Contents" -type f \( -perm -u+x -o -name "*.dylib" -o -name "*.so" \) -print0)
+if [ "${checked}" -eq 0 ]; then
+  echo "Error: found no binaries in ${app} to strip rpaths from" >&2
+  exit 1
+fi
+
 # Apple's timestamp service can be temporarily unavailable, so retry codesigning
 codesign_with_retry() {
   local max_attempts=3

@@ -253,8 +253,19 @@ codesign_with_retry() {
 }
 
 # Sign everything now that we're done modifying contents of the .app file
-# Keychain is already setup in travis.osx.after_success.sh for us
-if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
+# CI/osx.after_success.sh sets up the keychain for release and PTB builds. Fork
+# pull requests get no secrets, so no identity, and are signed ad hoc: Apple Silicon
+# kills an app whose signature is missing or stale, as install_name_tool leaves it.
+if [ -z "${IDENTITY:-}" ]; then
+  signing_mode="ad-hoc"
+  echo "Signing mode: ad-hoc (no IDENTITY configured)"
+  if ! codesign --deep --force --sign - "${app}"; then
+    echo "Error: ad-hoc signing of ${app} failed" >&2
+    exit 1
+  fi
+elif security find-identity | grep -Fq -- "$IDENTITY"; then
+  signing_mode="Developer ID"
+  echo "Signing mode: Developer ID (${IDENTITY})"
   # Sparkle ships with several binaries that need to be codesigned by us, otherwise the whole bundle will be invalid.
   codesign_with_retry --deep --force -o runtime --sign "$IDENTITY" "${app}/Contents/Frameworks/Sparkle.framework/Sparkle"
   codesign_with_retry --deep --force -o runtime --sign "$IDENTITY" "${app}/Contents/Frameworks/Sparkle.framework/Autoupdate"
@@ -271,9 +282,17 @@ if [ -n "$IDENTITY" ] && security find-identity | grep -q "$IDENTITY"; then
   if [ -f "${ENTITLEMENTS_FILE}" ]; then
     codesign_with_retry --force -o runtime --entitlements "${ENTITLEMENTS_FILE}" --sign "$IDENTITY" "${app}"
   fi
-  echo "Validating codesigning worked with codesign -vv --deep-verify:"
-  codesign -vv --deep-verify "${app}"
+else
+  echo "Error: signing identity \"${IDENTITY}\" is configured but not in the keychain - refusing to fall back to ad-hoc signing" >&2
+  exit 1
 fi
+
+echo "Verifying the signature with codesign --verify --deep --strict:"
+if ! codesign --verify --deep --strict --verbose=2 "${app}"; then
+  echo "Error: ${app} has an invalid signature after ${signing_mode} signing" >&2
+  exit 1
+fi
+echo "Signature verification: passed (${signing_mode})"
 
 # Generate final .dmg
 cd ../../
@@ -293,11 +312,14 @@ else
 fi
 
 # Last: build *.dmg file
+dmg="${HOME}/Desktop/$(basename "${app%.*}").dmg"
+dmg_built=""
 for i in {1..5}; do
     echo "Attempt $i of 5..."
-    if appdmg "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json" "${HOME}/Desktop/$(basename "${app%.*}").dmg"; then
+    if appdmg "${BUILD_DIR}/../installers/osx/appdmg/mudlet-appdmg.json" "${dmg}"; then
         echo "Success on attempt $i!"
-        exit 0
+        dmg_built="yes"
+        break
     else
         echo "Attempt $i failed"
         if [ $i -lt 5 ]; then
@@ -306,3 +328,22 @@ for i in {1..5}; do
         fi
     fi
 done
+if [ -z "${dmg_built}" ]; then
+  echo "Error: appdmg failed 5 times" >&2
+  exit 1
+fi
+
+# Verify the app as the DMG delivers it, in case building the DMG damaged the signed bundle
+mount=$(mktemp -d)
+hdiutil attach -readonly -nobrowse -noautoopen -mountpoint "${mount}" "${dmg}"
+packaged_signature_valid="yes"
+codesign --verify --deep --strict --verbose=2 "${mount}/$(basename "${app}")" || packaged_signature_valid=""
+hdiutil detach "${mount}"
+rmdir "${mount}" || true
+if [ -z "${packaged_signature_valid}" ]; then
+  rm -f "${dmg}"
+  echo "Error: the app inside ${dmg} has an invalid signature" >&2
+  exit 1
+fi
+echo "Signature verification of the packaged app: passed (${signing_mode})"
+exit 0
